@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palenque Go Sivar | Landing UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fuentes: Anton para los títulos gigantes (estilo The Chosen) y Outfit para los textos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'impact': ['Anton', 'sans-serif'], // Fuente gigante y condensada
+                        'sans': ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            teal: '#319795', // Color del botón de la imagen de Cristo
+                            dark: '#111111',
+                            card: '#1a1a1a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #111111;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Utilidad para el escalonado del texto principal */
+        .text-shadow-heavy {
+            text-shadow: 0px 10px 30px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <!-- ==========================================
+         COMPONENTE 0: NAVBAR (Estilo The Chosen)
+         ========================================== -->
+    <header class="absolute top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+        <div class="flex items-center gap-2">
+            <h1 class="font-impact text-3xl tracking-widest text-white uppercase">
+                Palenque<span class="text-sm font-sans tracking-normal ml-1 align-middle text-gray-300">Go Sivar</span>
+            </h1>
+        </div>
+
+        <nav class="hidden lg:flex gap-6 text-[11px] font-bold tracking-[0.15em] text-white uppercase">
+            <a href="#" class="hover:text-brand-teal transition">Inicio</a>
+            <a href="#" class="hover:text-brand-teal transition">Módulos</a>
+            <a href="#" class="hover:text-brand-teal transition">Ecosistema</a>
+            <a href="#" class="hover:text-brand-teal transition">Afiliados</a>
+            <a href="#" class="hover:text-brand-teal transition">Demo Video</a>
+        </nav>
+
+        <div>
+            <a href="#" class="bg-brand-teal text-white px-8 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase hover:bg-teal-500 transition shadow-lg shadow-teal-900/50">
+                Acceder
+            </a>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         COMPONENTE 1: HERO SECTION (Escalonado gigante)
+         ========================================== -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden">
+        <!-- Imagen de fondo -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Costa El Salvador" class="w-full h-full object-cover object-center opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#111111]"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 flex flex-col items-center">
+
+            <!-- Bloque de texto imitando la disposición de la imagen de referencia -->
+            <div class="w-full max-w-5xl">
+                <!-- Textos alineados a la izquierda -->
+                <div class="flex flex-col items-start leading-[0.85] text-shadow-heavy">
+                    <h2 class="font-impact text-[5rem] md:text-[8rem] lg:text-[10rem] text-white uppercase tracking-tight">DIGITALIZANDO</h2>
+                    <h2 class="font-impact text-[5rem] md:text-[8rem] lg:text-[10rem] text-white uppercase tracking-tight -mt-4 md:-mt-8">LA COSTA</h2>
+                </div>
+
+                <!-- Separador con botón y subtítulo en medio -->
+                <div class="w-full flex flex-col md:flex-row items-end justify-between my-8 pl-4 md:pl-24">
+                    <p class="text-lg md:text-xl font-light max-w-md text-gray-200 mb-6 md:mb-0 border-l-2 border-brand-teal pl-6">
+                        Puedes jugar un rol principal en llevar tu negocio al mundo digital a través del ecosistema <strong>Palenque Go</strong>.
+                    </p>
+                    <button class="bg-brand-teal text-white px-10 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-teal-500 transition shadow-[0_0_30px_rgba(49,151,149,0.4)] whitespace-nowrap">
+                        Explorar Ahora
+                    </button>
+                </div>
+
+                <!-- Textos alineados a la derecha -->
+                <div class="flex flex-col items-end leading-[0.85] text-shadow-heavy">
+                    <h2 class="font-impact text-[5rem] md:text-[8rem] lg:text-[10rem] text-white uppercase tracking-tight">CON EL ECOSISTEMA</h2>
+                    <h2 class="font-impact text-[5rem] md:text-[8rem] lg:text-[10rem] text-white uppercase tracking-tight -mt-4 md:-mt-8">ORGÁNICO</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         COMPONENTE 2: IMPACTO & VIDEO (Borde grueso)
+         ========================================== -->
+    <section class="bg-brand-dark py-24 relative z-10">
+        <div class="container mx-auto px-6 text-center">
+
+            <h2 class="font-impact text-5xl md:text-7xl uppercase tracking-wide mb-4">
+                TU ECOSISTEMA GENERA IMPACTO
+            </h2>
+            <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto mb-16">
+                Sincroniza tus reservas y deja que la tecnología se encargue de optimizar tu ocupación sin perder la esencia local.
+            </p>
+
+            <!-- Reproductor de Video Estilo "The Chosen" -->
+            <div class="relative max-w-5xl mx-auto group cursor-pointer">
+                <!-- Marco blanco grueso -->
+                <div class="rounded-xl border-[12px] md:border-[16px] border-white overflow-hidden aspect-video relative shadow-2xl bg-black">
+                    <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" alt="Video Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                    <div class="absolute inset-0 bg-black/30"></div>
+
+                    <!-- Botón de Play Central -->
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                        <div class="w-24 h-24 md:w-32 md:h-32 rounded-full border-[3px] md:border-[5px] border-white/80 flex items-center justify-center bg-white/10 backdrop-blur-sm group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-play text-white text-3xl md:text-5xl ml-2 opacity-90"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ==========================================
+         COMPONENTE 2.5: FAQ / FORMAS DE PARTICIPAR (Acordeón)
+         ========================================== -->
+    <section class="bg-[#111111] py-20 relative z-10">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="grid md:grid-cols-2 gap-16">
+                <!-- Columna Izquierda: Textos -->
+                <div>
+                    <h2 class="font-impact text-6xl md:text-[5.5rem] uppercase tracking-wide text-brand-teal mb-8 leading-[0.9]">
+                        FORMAS DE<br>PARTICIPAR
+                    </h2>
+
+                    <p class="text-gray-100 font-sans text-sm md:text-base leading-relaxed mb-6">
+                        Como un <strong>aliado estratégico</strong> reconocido en la costa salvadoreña, el ecosistema Palenque Go existe para hacer posible la digitalización y compartir tu experiencia con el mundo a través de <strong>nuevas herramientas tecnológicas y estrategias de distribución</strong>. Tus operaciones son <strong>optimizadas al máximo de su capacidad</strong>, y hay muchas maneras fáciles en las que puedes contribuir y conectarte a la red de Palenque Go Sivar.
+                    </p>
+
+                    <p class="text-gray-100 font-sans text-sm md:text-base leading-relaxed">
+                        Si estás en La Libertad, El Tunco, Santa Ana, San Miguel o la Ruta de las Flores, y te gustaría recibir asesoría técnica personalizada, <a href="#" class="text-white underline font-bold hover:text-brand-teal transition">haz clic aquí.</a>
+                    </p>
+                </div>
+
+                <!-- Columna Derecha: Acordeón de Opciones -->
+                <div class="flex flex-col justify-start">
+
+                    <!-- Item 1 -->
+                    <div class="border-t border-b border-white/20">
+                        <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-white/5 transition-colors px-2 text-left">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-teal flex items-center justify-center text-brand-teal">
+                                    <i class="fas fa-desktop text-lg"></i>
+                                </div>
+                                <span class="font-impact tracking-wider text-2xl uppercase mt-1">SISTEMA ONLINE</span>
+                            </div>
+                            <i class="fas fa-plus text-white text-xl font-light transition-transform duration-300 transform"></i>
+                        </button>
+                        <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                            <p class="text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                Integra nuestro widget de reservas directamente en tu sitio web. Sincronización automática de calendarios, pagos seguros y confirmaciones en tiempo real para tus huéspedes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="border-b border-white/20">
+                        <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-white/5 transition-colors px-2 text-left">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-teal flex items-center justify-center text-brand-teal">
+                                    <i class="fas fa-university text-lg"></i>
+                                </div>
+                                <span class="font-impact tracking-wider text-2xl uppercase mt-1">TRANSFERENCIA BANCARIA</span>
+                            </div>
+                            <i class="fas fa-plus text-white text-xl font-light transition-transform duration-300 transform"></i>
+                        </button>
+                        <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                            <p class="text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                Recibe pagos directos a tu cuenta de banco local. Liquidaciones programadas de manera segura y sin comisiones ocultas por transacción.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="border-b border-white/20">
+                        <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-white/5 transition-colors px-2 text-left">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-teal flex items-center justify-center text-brand-teal">
+                                    <i class="fas fa-link text-lg"></i>
+                                </div>
+                                <span class="font-impact tracking-wider text-2xl uppercase mt-1">FONDO DE AFILIADOS</span>
+                            </div>
+                            <i class="fas fa-plus text-white text-xl font-light transition-transform duration-300 transform"></i>
+                        </button>
+                        <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                            <p class="text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                Multiplica tus ventas a través de nuestra red de creadores de contenido y agencias de viaje. Solo pagas comisión cuando la reserva se hace efectiva.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="border-b border-white/20">
+                        <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-white/5 transition-colors px-2 text-left">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-teal flex items-center justify-center text-brand-teal">
+                                    <i class="fas fa-chart-bar text-lg"></i>
+                                </div>
+                                <span class="font-impact tracking-wider text-2xl uppercase mt-1">DONACIÓN DE INVENTARIO</span>
+                            </div>
+                            <i class="fas fa-plus text-white text-xl font-light transition-transform duration-300 transform"></i>
+                        </button>
+                        <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                            <p class="text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                Sincroniza las habitaciones o espacios que no se estén utilizando en temporada baja y ofrécelos a programas corporativos con beneficios exclusivos.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="border-b border-white/20">
+                        <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-white/5 transition-colors px-2 text-left">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-teal flex items-center justify-center text-brand-teal">
+                                    <i class="fas fa-envelope text-lg"></i>
+                                </div>
+                                <span class="font-impact tracking-wider text-2xl uppercase mt-1">CORREO CERTIFICADO</span>
+                            </div>
+                            <i class="fas fa-plus text-white text-xl font-light transition-transform duration-300 transform"></i>
+                        </button>
+                        <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                            <p class="text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                Automatiza el envío de correos post-reserva, encuestas de satisfacción y cupones de descuento para fidelizar a los clientes que ya te visitaron.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Item 6 -->
+                    <div class="border-b border-white/20">
+                        <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-white/5 transition-colors px-2 text-left">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-teal flex items-center justify-center text-brand-teal">
+                                    <i class="fab fa-bitcoin text-lg"></i>
+                                </div>
+                                <span class="font-impact tracking-wider text-2xl uppercase mt-1">BILLETERA CHIVO</span>
+                            </div>
+                            <i class="fas fa-plus text-white text-xl font-light transition-transform duration-300 transform"></i>
+                        </button>
+                        <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                            <p class="text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                Únete a la economía digital local. Acepta pagos en Bitcoin fácilmente mediante la integración de Chivo Wallet y Lightning Network sin complicaciones.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         COMPONENTE 3: HERRAMIENTAS (Manteniendo el estilo visual)
+         ========================================== -->
+    <section class="bg-[#151515] py-24 relative z-10 border-t border-white/5">
+        <div class="container mx-auto px-6">
+
+            <div class="text-center mb-16">
+                <h2 class="font-impact text-5xl md:text-6xl uppercase tracking-wide mb-4 text-white">
+                    TECNOLOGÍA EN TU LENGUAJE
+                </h2>
+                <p class="text-lg text-brand-teal font-semibold tracking-widest uppercase">
+                    3 Módulos para dominar tu operación
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Card 1 -->
+                <div class="bg-brand-dark p-10 rounded-xl border border-white/10 hover:border-brand-teal/50 transition-colors group">
+                    <div class="text-brand-teal text-4xl mb-6 group-hover:scale-110 transition-transform origin-left">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="font-impact text-3xl tracking-wider mb-4">ALGORITMO DINÁMICO</h3>
+                    <p class="text-gray-400 font-light leading-relaxed">
+                        Sistema que escanea inventarios vacíos 24h antes y aplica descuentos automáticos asegurando la ocupación completa.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-brand-dark p-10 rounded-xl border border-white/10 hover:border-brand-teal/50 transition-colors group">
+                    <div class="text-brand-teal text-4xl mb-6 group-hover:scale-110 transition-transform origin-left">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3 class="font-impact text-3xl tracking-wider mb-4">ATRIBUCIÓN INTELIGENTE</h3>
+                    <p class="text-gray-400 font-light leading-relaxed">
+                        Olvídate de vender puerta a puerta. Rastrean quién hace clic en tu enlace y asignan comisiones instantáneamente.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-brand-dark p-10 rounded-xl border border-white/10 hover:border-brand-teal/50 transition-colors group">
+                    <div class="text-brand-teal text-4xl mb-6 group-hover:scale-110 transition-transform origin-left">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="font-impact text-3xl tracking-wider mb-4">GARANTÍA AL ALIADO</h3>
+                    <p class="text-gray-400 font-light leading-relaxed">
+                        El sistema garantiza el pago del 100% al cerrar el grupo, eliminando las pérdidas por cancelaciones de último minuto.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ==========================================
+         COMPONENTE 4: FOOTER GENIAL / CTA FINAL
+         ========================================== -->
+    <section class="relative bg-brand-dark z-10 border-t border-brand-teal/20">
+
+        <!-- Tarjetas Visuales (Como en la referencia Olas & Cafe inferior) -->
+        <div class="grid md:grid-cols-2">
+            <div class="relative h-[400px] overflow-hidden group">
+                <img src="https://images.unsplash.com/photo-1518182170546-076616fdacfa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Montaña" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/50 to-transparent"></div>
+                <div class="absolute bottom-10 left-10 right-10">
+                    <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-mountain text-brand-teal text-xl"></i>
+                    </div>
+                    <h3 class="font-impact text-4xl tracking-wider mb-2">CONEXIÓN MONTAÑA</h3>
+                    <p class="text-gray-300 font-light max-w-md">Del color de las olas a la neblina del café en un solo viaje. Conectamos la costa con Apaneca.</p>
+                </div>
+            </div>
+
+            <div class="relative h-[400px] overflow-hidden group">
+                <img src="https://images.unsplash.com/photo-1596395819057-cb39137021e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Playa" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/50 to-transparent"></div>
+                <div class="absolute bottom-10 left-10 right-10">
+                    <div class="w-12 h-12 bg-brand-teal rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(49,151,149,0.5)]">
+                        <i class="fas fa-water text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-impact text-4xl tracking-wider mb-2">RUTA PANORÁMICA</h3>
+                    <p class="text-gray-300 font-light max-w-md">Rutas costeras diseñadas para inspirar. El mar es tu compañero de viaje en cada kilómetro.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Rico y Detallado -->
+        <footer class="bg-black pt-20 pb-10 px-6 border-t border-white/5">
+            <div class="container mx-auto max-w-6xl">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                    <!-- Columna 1 -->
+                    <div class="col-span-1 md:col-span-2">
+                        <h1 class="font-impact text-4xl tracking-widest text-white uppercase mb-6">
+                            Palenque<span class="text-brand-teal font-sans font-bold text-2xl tracking-normal">Go</span>
+                        </h1>
+                        <p class="text-gray-400 font-light max-w-sm mb-8">
+                            Transformando la economía de la costa salvadoreña. Unimos la calidez ancestral con la eficiencia tecnológica.
+                        </p>
+                        <div class="flex gap-4">
+                            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-teal transition-colors"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-teal transition-colors"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-teal transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- Columna 2 -->
+                    <div>
+                        <h4 class="font-bold tracking-widest uppercase text-white mb-6 text-sm">Plataforma</h4>
+                        <ul class="space-y-4 text-gray-400 font-light text-sm">
+                            <li><a href="#" class="hover:text-brand-teal transition">Módulos Premium</a></li>
+                            <li><a href="#" class="hover:text-brand-teal transition">API de Mapas</a></li>
+                            <li><a href="#" class="hover:text-brand-teal transition">Sistema de Afiliados</a></li>
+                            <li><a href="#" class="hover:text-brand-teal transition">Casos de Éxito</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 3 -->
+                    <div>
+                        <h4 class="font-bold tracking-widest uppercase text-white mb-6 text-sm">Únete</h4>
+                        <p class="text-gray-400 font-light text-sm mb-4">Recibe actualizaciones sobre las nuevas herramientas del ecosistema.</p>
+                        <div class="flex">
+                            <input type="email" placeholder="Tu correo" class="bg-white/5 border border-white/10 px-4 py-3 rounded-l-lg w-full focus:outline-none focus:border-brand-teal text-sm">
+                            <button class="bg-brand-teal px-4 py-3 rounded-r-lg hover:bg-teal-500 transition">
+                                <i class="fas fa-paper-plane text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-light">
+                    <p>&copy; 2024 Palenque Go Sivar. Todos los derechos reservados.</p>
+                    <div class="flex gap-6 mt-4 md:mt-0">
+                        <a href="#" class="hover:text-white transition">Términos Legales</a>
+                        <a href="#" class="hover:text-white transition">Privacidad</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </section>
+
+    <!-- Script para funcionalidad del Acordeón -->
+    <script>
+        function toggleFaq(button) {
+            // Obtenemos el div que contiene el texto (el siguiente elemento hermano)
+            const content = button.nextElementSibling;
+            // Obtenemos el icono de '+'
+            const icon = button.querySelector('.fa-plus');
+
+            // Si está abierto (tiene altura asignada), lo cerramos
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                content.classList.remove('opacity-100');
+                content.classList.add('opacity-0');
+                icon.classList.remove('rotate-45');
+            } else {
+                // Si está cerrado, calculamos su altura real y lo abrimos
+                content.style.maxHeight = content.scrollHeight + "px";
+                content.classList.remove('opacity-0');
+                content.classList.add('opacity-100');
+                icon.classList.add('rotate-45'); // Rota el + 45 grados para que parezca una 'x'
+            }
+        }
+    </script>
+</body>
+</html>

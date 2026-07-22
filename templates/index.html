@@ -1,0 +1,1990 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAVE & BREW | Premium Commute Experience</title>
+    
+    <!-- =================================================================================
+         LIBRERÍAS EXTERNAS (CDN)
+         - TailwindCSS: Framework de diseño
+         - FontAwesome: Iconos vectoriales
+         - AOS (Animate On Scroll): Animaciones al hacer scroll
+         - Google Fonts: Tipografía 'Outfit' y 'Playfair Display' (Lujo)
+    ================================================================================== -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Configuración de Fuentes y Colores Corporativos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Outfit"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            turquesa: '#105238',
+                            lima: '#8ee01a',
+                            accent: '#c4d551',
+                            dark: '#0B0F19',
+                            darker: '#020408',
+                        }
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('imagenes/hero.jpg')",
+                        'coffee-texture': "url('https://www.transparenttextures.com/patterns/cubes.png')",
+                    },
+                    boxShadow: {
+                        'neon-accent': '0 0 20px rgba(196, 213, 81, 0.3)',
+                        'neon-turquesa': '0 0 20px rgba(16, 82, 56, 0.3)',
+                    }
+                }
+            }
+        }
+
+        // Theme init - SIEMPRE carga en modo claro (light)
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+        
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS PERSONALIZADO PARA DETALLES FINOS */
+        body {
+            /* background-color and color moved to tailwind classes */
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar Personalizada */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B0F19; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8CE01A;
+        }
+
+        /* Efecto Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .dark .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+       .text-brand-turquesa dark:text-brand-accent {
+    background: linear-gradient(90deg, #34d399 0%, #facc15 50%, #f97316 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+        /* Animación de Texto Gradiente */
+       .text-gradient-gold {
+    /* Gradiente ajustado: Verde Menta -> Dorado/Naranja */
+    background: linear-gradient(to right, #4ade80, #eab308, #f59e0b);
+    
+    /* Propiedades de recorte de texto */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text; /* Estándar para compatibilidad */
+    
+    /* Animación */
+    background-size: 200% auto;
+    animation: shine 5s linear infinite;
+}
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* Efecto de Onda (Wave) en CSS Puro */
+        .custom-wave-divider {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+        .custom-wave-divider svg {
+            position: relative;
+            display: block;
+            width: calc(150% + 1.3px);
+            height: 120px;
+        }
+        .custom-wave-divider .shape-fill { fill: #0B0F19; }
+
+        /* Mockup de Teléfono 3D */
+        .phone-mockup {
+            transform: perspective(1000px) rotateY(-15deg) rotateX(5deg);
+            transition: transform 0.5s ease;
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.5), -5px -5px 20px rgba(255,255,255,0.05);
+        }
+        .phone-mockup:hover {
+            transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-[#0B0F19] dark:text-[#E2E8F0] transition-colors duration-300">
+
+    <!-- =================================================================================
+         1. NAVBAR (Sticky & Glass)
+    ================================================================================== -->
+    <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
+        <div class="glass-panel border-b-0 border-white/5">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <!-- Logo -->
+                    <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer">
+                        <a href="/">
+                            <img src="{% static 'imagenes/logo-dark.png' %}" alt="Palenque Go" class="h-16 dark:hidden">
+                            <img src="{% static 'imagenes/logo-light.png' %}" alt="Palenque Go" class="h-16 hidden dark:block">
+                        </a>
+                    </div>
+
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-8">
+                            <a href="#inicio" class="text-gray-900 dark:text-white hover:text-brand-turquesa dark:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Inicio</a>
+                             <a href="#mercado-vivo" class="text-gray-700 dark:text-gray-300 hover:text-brand-turquesa dark:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Mercado en vivo</a>
+                            <a href="#experiencia" class="text-gray-700 dark:text-gray-300 hover:text-brand-turquesa dark:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Experiencia</a>
+                            <a href="#rutas" class="text-gray-700 dark:text-gray-300 hover:text-brand-turquesa dark:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Rutas Live</a>
+                            <a href="#tecnologia" class="text-gray-700 dark:text-gray-300 hover:text-brand-turquesa dark:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Efecto Pool</a>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="hidden md:flex items-center gap-4">
+                        <button onclick="toggleTheme()" class="text-gray-800 dark:text-white text-xl hover:text-brand-turquesa dark:hover:text-brand-accent transition mr-2">
+                            <i class="fas fa-moon dark:hidden"></i>
+                            <i class="fas fa-sun hidden dark:inline"></i>
+                        </button>
+                        <a href="/admin/" class="border-2 border-gray-800 dark:border-white text-gray-800 dark:text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-800 hover:text-white dark:text-white dark:hover:bg-white dark:hover:text-brand-dark transition-all duration-300">
+                            <i class="fas fa-building mr-2"></i>Soy empresa
+                        </a>
+                        <a href="https://palenquegov6.netlify.app/" class="bg-gradient-to-r from-brand-turquesa to-brand-lima text-white px-6 py-2.5 rounded-full font-bold text-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                            <i class="fas fa-bolt mr-2 text-brand-lima"></i>Reserva tu viaje
+                        </a>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                  <div class="-mr-2 flex md:hidden">
+                    <button onclick="toggleMobileMenu()" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-white/10 focus:outline-none transition-colors">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mobile-menu-overlay" class="fixed inset-0 z-[60] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="mobile-backdrop" onclick="toggleMobileMenu()"></div>
+
+    <div class="absolute right-0 top-0 h-full w-[80%] max-w-[300px] bg-gray-50 dark:bg-[#0B0F19] border-l border-white/10 shadow-2xl transform translate-x-full transition-transform duration-300 ease-out flex flex-col" id="mobile-sidebar">
+        
+        <div class="p-6 border-b border-white/5 flex justify-between items-center bg-[#050810]">
+            <span class="text-xl font-bold text-gray-900 dark:text-white">MENÚ</span>
+            <button onclick="toggleMobileMenu()" class="text-gray-600 dark:text-gray-400 hover:text-brand-turquesa dark:text-brand-accent transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-2">
+            <a href="#inicio" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                <i class="fas fa-home text-brand-turquesa dark:text-brand-accent w-5"></i> Inicio
+            </a>
+            <a href="#mercado-vivo" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                <i class="fas fa-chart-line text-brand-turquesa dark:text-brand-accent w-5"></i> Mercado Vivo
+            </a>
+            <a href="#experiencia" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                <i class="fas fa-star text-brand-turquesa dark:text-brand-accent w-5"></i> Experiencia
+            </a>
+            <a href="#rutas" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                <i class="fas fa-map text-brand-turquesa dark:text-brand-accent w-5"></i> Rutas Live
+            </a>
+            <a href="#tecnologia" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                <i class="fas fa-microchip text-brand-turquesa dark:text-brand-accent w-5"></i> Tecnología
+            </a>
+        </div>
+
+        <div class="p-6 bg-[#f0f2f5] dark:bg-[#020408] border-t border-white/10 space-y-3">
+            <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Acceso Inmediato</p>
+            
+            <button class="w-full bg-brand-turquesa dark:bg-brand-accent text-white dark:text-gray-900 py-3 rounded-lg flex items-center justify-start px-4 gap-3 hover:bg-brand-turquesa/90 transition shadow-lg group">
+                <div class="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center">
+                    <i class="fas fa-bolt text-lg text-white dark:text-gray-900 group-hover:rotate-12 transition-transform"></i>
+                </div>
+                <div class="text-left leading-none">
+                    <span class="block text-[8px] font-bold uppercase opacity-80">Sin descargas</span>
+                    <span class="block font-bold text-sm">Iniciar Ahora</span>
+                </div>
+            </button>
+
+            <button class="w-full bg-white/5 border border-white/20 text-gray-900 dark:text-white py-3 rounded-lg flex items-center justify-start px-4 gap-3 hover:bg-white/10 transition group">
+                <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                    <i class="fas fa-mobile-screen-button text-lg text-gray-600 dark:text-gray-400 group-hover:text-brand-turquesa dark:text-brand-accent transition-colors"></i>
+                </div>
+                <div class="text-left leading-none">
+                    <span class="block text-[8px] font-bold uppercase text-gray-500">Web App</span>
+                    <span class="block font-bold text-sm">Instalar Acceso</span>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+
+    <!-- =================================================================================
+         2. HERO SECTION (Impacto Visual)
+    ================================================================================== -->
+    <section id="inicio" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-28 pb-24 lg:pb-32">
+        <!-- Background Image Parallax -->
+        <div class="absolute inset-0 bg-hero-pattern bg-cover bg-center bg-no-repeat fixed-bg transform scale-110"></div>
+        <!-- Gradient Overlay para legibilidad -->
+        <div class="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/40 dark:from-brand-dark dark:via-brand-dark/90 dark:to-brand-dark/40"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-transparent dark:from-brand-dark dark:via-transparent dark:to-transparent"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            <!-- Texto Principal -->
+            <div class="space-y-8" data-aos="fade-right" data-aos-duration="1000">
+                <a href="https://palenquegov6.netlify.app/" target="_blank" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-turquesa dark:border-brand-accent/30 bg-brand-turquesa/10 dark:bg-brand-accent/10 backdrop-blur-sm hover:bg-brand-turquesa/20 transition-colors duration-300">
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-lima dark:bg-brand-accent opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-lima dark:bg-brand-accent"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-brand-turquesa dark:text-brand-accent tracking-widest uppercase hover:underline">Tu asiento está reservado <i class="fas fa-arrow-right ml-1"></i></span>
+                </a>
+
+                <h1 class="text-5xl lg:text-7xl font-bold leading-tight font-['Avant_Garde',sans-serif] text-gray-900 dark:text-white">
+                    Tu viaje diario,<br>
+                    <span class="italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-brand-turquesa via-brand-accent to-brand-lima">
+  elevado al máximo.
+</span>
+                </h1>
+
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-xl leading-relaxed font-light">
+                        Rompe con los itinerarios rígidos. <strong class="text-gray-900 dark:text-white">Olas & Café</strong> es el puente que conecta la energía de la costa con la calma de la montaña. Un sistema circular donde tú controlas el tiempo y el destino.
+                    </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+    <button onclick="openRoutesModal()" class="px-8 py-4 bg-brand-turquesa dark:bg-brand-accent text-white dark:text-brand-dark font-bold rounded-lg shadow-neon-turquesa dark:shadow-neon-accent hover:bg-white hover:text-brand-turquesa dark:hover:bg-brand-dark dark:hover:text-white transition-all duration-300 flex items-center justify-center gap-3 group">
+        <span>Ver Rutas en Vivo</span>
+        <i class="fas fa-map-location-dot group-hover:translate-x-1 transition-transform"></i>
+    </button>
+    
+    <button onclick="openVideoModal()" class="px-8 py-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-3 backdrop-blur-sm">
+        <i class="fas fa-play"></i>
+        <span>Demo Video</span>
+    </button>
+</div>
+
+                <!-- Stats Pequeñas -->
+                <div class="pt-8 flex items-center gap-8 border-t border-white/10 mt-8">
+                    <div>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">10+</p>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider">Rutas Premium</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">99%</p>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider">Puntualidad</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">4.9</p>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider">Valoración App</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup Visual 3D (Derecha) -->
+            <div class="relative hidden lg:block perspective-container" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
+                <!-- Círculos decorativos de fondo -->
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-turquesa/20 dark:bg-brand-accent/5 rounded-full blur-3xl animate-pulse"></div>
+                
+                <!-- El Teléfono (CSS Puro) -->
+                <div class="phone-mockup relative mx-auto w-[320px] h-[650px] bg-gray-900 rounded-[3rem] border-8 border-gray-800 outline outline-2 outline-gray-700 overflow-hidden z-10">
+                    <!-- Dynamic Island -->
+                    <div class="absolute top-0 inset-x-0 h-8 bg-black z-20 mx-auto w-32 rounded-b-xl"></div>
+                    
+                    <!-- Pantalla -->
+                    <div class="relative w-full h-full bg-slate-800">
+                        <!-- Mapa de Fondo -->
+                        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover opacity-60" alt="Map Interface">
+                        
+                        <!-- UI Element: Header -->
+                        <div class="absolute top-12 left-4 right-4 flex justify-between items-center">
+                            <div class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-brand-dark"><i class="fas fa-bars"></i></div>
+                            <div class="px-4 py-2 bg-white/80 dark:bg-brand-dark/80 backdrop-blur rounded-full text-gray-900 dark:text-white text-xs font-bold shadow-lg border border-brand-turquesa dark:border-brand-accent/30">
+                                <span class="w-2 h-2 bg-green-500 rounded-full inline-block mr-2 animate-pulse"></span>EN RUTA
+                            </div>
+                        </div>
+
+                        <!-- UI Element: Bus Marker -->
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <div class="w-16 h-16 bg-brand-turquesa dark:bg-brand-accent rounded-full flex items-center justify-center shadow-neon-turquesa dark:shadow-neon-accent border-4 border-white z-10 relative animate-bounce">
+                                <i class="fas fa-bus text-2xl text-brand-dark"></i>
+                            </div>
+                            <div class="absolute inset-0 bg-brand-turquesa dark:bg-brand-accent rounded-full animate-ping opacity-75"></div>
+                        </div>
+
+                        <!-- UI Element: Bottom Card -->
+                        <div class="absolute bottom-6 left-4 right-4 bg-white p-5 rounded-2xl shadow-2xl z-20">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-sm">Ruta Costera #4</h4>
+                                    <p class="text-xs text-gray-500 flex items-center gap-1"><i class="fas fa-clock"></i> Llegada: 08:45 AM</p>
+                                </div>
+                                <div class="bg-gray-100 p-2 rounded-lg">
+                                    <i class="fas fa-coffee text-brand-turquesa dark:text-brand-accent"></i>
+                                </div>
+                            </div>
+                            <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-brand-turquesa dark:bg-brand-accent h-full w-[70%]"></div>
+                            </div>
+                            <p class="text-[10px] text-gray-600 dark:text-gray-400 mt-2 text-right">Próxima: Playa Blanca (3 min)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Down Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-gray-500">
+            <i class="fas fa-chevron-down text-xl"></i>
+        </div>
+    </section>
+
+    <!-- =================================================================================
+         3. LOGO STRIP (Trusted By)
+    ================================================================================== -->
+    <div class="relative overflow-hidden py-10 bg-gradient-to-r from-brand-turquesa to-brand-lima border-y border-brand-turquesa/20">
+        <!-- Marcas de agua -->
+        <img src="{% static 'imagenes/logo-white.png' %}" class="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 -rotate-12 h-40 md:h-64 opacity-20 pointer-events-none mix-blend-overlay" alt="Watermark">
+        <img src="{% static 'imagenes/logo-white.png' %}" class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 -rotate-12 h-40 md:h-64 opacity-20 pointer-events-none hidden md:block mix-blend-overlay" alt="Watermark">
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <p class="text-center text-white/90 text-xs tracking-widest uppercase mb-6">Tecnología impulsada por</p>
+            <div class="flex flex-wrap justify-center gap-12 md:gap-24 opacity-90 transition-all duration-500">
+                <!-- Logos simulados con texto/iconos FontAwesome -->
+                <div class="flex items-center gap-2 text-xl font-bold text-white"><i class="fab fa-python"></i> Django</div>
+                <div class="flex items-center gap-2 text-xl font-bold text-white"><i class="fab fa-google"></i> Maps API</div>
+                <div class="flex items-center gap-2 text-xl font-bold text-white"><i class="fab fa-aws"></i> AWS Cloud</div>
+                <div class="flex items-center gap-2 text-xl font-bold text-white"><i class="fab fa-stripe"></i> Stripe</div>
+            </div>
+        </div>
+    </div>
+
+<section id="mercado-vivo" class="py-24 bg-[#f0f2f5] dark:bg-[#020408] relative overflow-hidden">
+        
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute inset-0" style="background-image: radial-gradient(circle at center, #1e293b 1px, transparent 1px); background-size: 30px 30px;"></div>
+            <div class="absolute top-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-turquesa/50 to-transparent animate-[shimmer_3s_infinite]"></div>
+            <div class="absolute top-2/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-lima/50 to-transparent animate-[shimmer_4s_infinite_reverse]"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-brand-turquesa dark:text-brand-accent font-bold tracking-[0.2em] uppercase text-xs mb-3 block">Ecosistema de Afiliados</span>
+                <h2 class="text-4xl md:text-5xl font-['Avant_Garde',sans-serif] font-bold text-gray-900 dark:text-white mb-6">
+                    El Mercado <span class="italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-brand-turquesa via-brand-accent to-brand-lima">En Vivo</span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto text-lg font-light leading-relaxed">
+                    Conectamos la necesidad del Hotel (llenar vacíos) con tu oportunidad de ganar.
+                    <span class="text-gray-900 dark:text-white font-medium">Sin ser dueño, sin operar, solo conectando.</span>
+                </p>
+            </div>
+
+            <div class="glass-panel rounded-[2.5rem] border border-white/10 p-1 relative shadow-2xl overflow-hidden group-hover-container">
+                
+                <div class="bg-gray-50 dark:bg-[#0B0F19]/95 rounded-[2.3rem] p-8 md:p-16 relative">
+                    
+                    <div class="absolute top-8 left-1/2 transform -translate-x-1/2 z-30">
+                        <button onclick="triggerMarketplaceSim()" id="btn-market-sim" class="flex items-center gap-3 bg-brand-turquesa hover:bg-[#0e4830] text-white px-8 py-3 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 shadow-neon-turquesa border border-brand-turquesa/30 hover:scale-105 active:scale-95">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                            </span>
+                            Simular Oportunidad Flash
+                        </button>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8 md:gap-12 items-stretch mt-12">
+                        
+                        <div class="relative flex flex-col" id="col-hotel">
+                            <div class="text-center mb-6 opacity-50 transition-opacity duration-300" id="label-hotel">
+                                <span class="text-[10px] uppercase tracking-widest text-brand-turquesa dark:text-white font-bold">1. El Problema (Afiliado)</span>
+                            </div>
+                            
+                            <div class="flex-grow bg-white dark:bg-[#0f172a] rounded-3xl border border-gray-200 dark:border-gray-800 p-5 shadow-xl relative overflow-hidden transition-all duration-500 hover:border-brand-lima dark:hover:border-brand-lima group">
+                                <div class="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-800 pb-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-brand-turquesa/10 flex items-center justify-center text-brand-turquesa dark:text-brand-accent"><i class="fas fa-hotel"></i></div>
+                                        <div>
+                                            <p class="text-xs text-gray-700 dark:text-gray-300 font-bold">Resort Punta Sal</p>
+                                            <p class="text-[9px] text-gray-500">Panel de Socio</p>
+                                        </div>
+                                    </div>
+                                    <div class="w-2 h-2 rounded-full bg-brand-turquesa dark:bg-brand-lima"></div>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <div class="flex justify-between text-[10px] text-gray-600 dark:text-gray-400">
+                                        <span>Ocupación Actual</span>
+                                        <span class="text-gray-900 dark:text-white font-mono" id="hotel-occ-val">45%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                        <div id="hotel-bar" class="h-full bg-red-500 w-[45%] transition-all duration-1000"></div>
+                                    </div>
+                                    <p id="hotel-status" class="text-[10px] text-red-400 font-bold bg-red-500/10 py-1 px-2 rounded border border-red-500/20 inline-block">
+                                        ⚠ Baja Ocupación Detectada
+                                    </p>
+                                </div>
+
+                                <div id="hotel-action-overlay" class="absolute inset-0 bg-brand-turquesa/90 backdrop-blur-sm flex flex-col items-center justify-center text-white opacity-0 transition-opacity duration-500">
+                                    <i class="fas fa-bolt text-3xl mb-2 animate-bounce"></i>
+                                    <p class="font-bold text-sm">¡OFERTA PUBLICADA!</p>
+                                    <p class="text-[10px] opacity-80">40% OFF liberado a la red</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="hidden md:flex absolute left-[31%] top-1/2 -translate-y-1/2 w-[6%] justify-center z-20">
+                            <i id="arrow-1" class="fas fa-chevron-right text-gray-700 text-2xl transition-all duration-300"></i>
+                        </div>
+
+                        <div class="relative flex flex-col" id="col-user">
+                            <div class="text-center mb-6 opacity-50 transition-opacity duration-300" id="label-user">
+                                <span class="text-[10px] uppercase tracking-widest text-brand-turquesa dark:text-white font-bold">2. Tu Acción (Smart Link)</span>
+                            </div>
+
+                            <div class="relative mx-auto w-[240px] h-full min-h-[320px] bg-[#f0f2f5] dark:bg-[#020408] rounded-[2.5rem] border-[6px] border-gray-800 shadow-2xl overflow-hidden flex flex-col">
+                                <div class="absolute top-0 inset-x-0 h-5 bg-black w-24 mx-auto rounded-b-xl z-20"></div>
+                                
+                                <div id="screen-radar" class="absolute inset-0 bg-gradient-to-b from-brand-turquesa/5 to-white dark:from-gray-900 dark:to-[#020408] flex flex-col items-center justify-center transition-opacity duration-500">
+                                    <div class="absolute w-40 h-40 border border-brand-turquesa/30 dark:border-brand-accent/10 rounded-full animate-[ping_3s_linear_infinite]"></div>
+                                    <div class="absolute w-24 h-24 border border-brand-turquesa/50 dark:border-brand-accent/20 rounded-full animate-[ping_3s_linear_infinite_1s]"></div>
+                                    <i class="fas fa-satellite-dish text-brand-turquesa dark:text-brand-accent/50 text-3xl animate-pulse"></i>
+                                    <p class="mt-4 text-[9px] text-brand-turquesa dark:text-gray-500 uppercase tracking-widest font-mono">Escaneando Red...</p>
+                                </div>
+
+                                <div id="screen-notif" class="absolute inset-0 bg-white dark:bg-gray-900 opacity-0 transition-opacity duration-500 p-4 flex flex-col pt-12">
+                                    <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg mb-4 transform -translate-y-4 opacity-0 transition-all duration-500" id="notif-card">
+                                        <div class="flex justify-between items-start">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-6 h-6 bg-red-500 rounded flex items-center justify-center text-white text-[10px] font-bold">%</div>
+                                                <span class="text-[10px] text-gray-800 dark:text-gray-200 font-bold">Punta Sal</span>
+                                            </div>
+                                            <span class="text-[9px] text-gray-500">Ahora</span>
+                                        </div>
+                                        <p class="text-gray-900 dark:text-white text-xs mt-2 font-bold leading-tight">2 Asientos disponibles a $120 (Antes $200)</p>
+                                    </div>
+
+                                    <button id="btn-share-mobile" class="mt-auto w-full bg-brand-turquesa dark:bg-brand-accent text-white dark:text-gray-900 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transform translate-y-10 opacity-0 transition-all duration-500">
+                                        <i class="fas fa-share-nodes"></i> COMPARTIR LINK
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="hidden md:flex absolute right-[31%] top-1/2 -translate-y-1/2 w-[6%] justify-center z-20">
+                            <i id="arrow-2" class="fas fa-chevron-right text-gray-700 text-2xl transition-all duration-300"></i>
+                        </div>
+
+                        <div class="relative flex flex-col" id="col-reward">
+                            <div class="text-center mb-6 opacity-50 transition-opacity duration-300" id="label-reward">
+                                <span class="text-[10px] uppercase tracking-widest text-brand-turquesa dark:text-white font-bold">3. Resultado (Comisión)</span>
+                            </div>
+
+                            <div class="flex-grow bg-gradient-to-br from-white to-brand-turquesa/5 dark:from-gray-900 dark:to-black rounded-3xl border border-gray-200 dark:border-gray-800 p-6 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-brand-lima dark:hover:border-brand-lima transition-colors duration-500">
+                                
+                                <div>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Saldo Disponible</p>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-3xl font-mono text-gray-900 dark:text-white tracking-tight" id="wallet-amount">$0.00</h3>
+                                        <span class="text-[10px] bg-brand-turquesa/10 dark:bg-brand-lima/10 text-brand-turquesa dark:text-brand-lima px-2 py-0.5 rounded border border-brand-turquesa/20 dark:border-brand-lima/20 opacity-0 transition-opacity" id="wallet-badge">+15%</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3 mt-6">
+                                    <div id="tx-placeholder" class="text-center text-gray-500 dark:text-gray-700 py-4 text-xs italic">Esperando transacciones...</div>
+                                    
+                                    <div id="tx-item" class="flex items-center justify-between p-3 bg-white dark:bg-white/5 rounded-xl border border-gray-100 dark:border-white/5 opacity-0 transform translate-x-4 transition-all duration-500 shadow-sm dark:shadow-none">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-brand-turquesa/10 dark:bg-brand-lima/20 text-brand-turquesa dark:text-brand-lima flex items-center justify-center"><i class="fas fa-arrow-down"></i></div>
+                                            <div>
+                                                <p class="text-xs text-gray-900 dark:text-white font-bold">Comisión #8490</p>
+                                                <p class="text-[9px] text-gray-500">Venta vía Link</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-brand-turquesa dark:text-brand-lima font-mono font-bold text-sm">+$12.00</span>
+                                    </div>
+                                </div>
+
+                                <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-brand-turquesa/10 dark:bg-brand-lima/10 rounded-full blur-3xl pointer-events-none"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                
+                <div class="glass-panel p-8 rounded-3xl border border-white/5 bg-gradient-to-b from-white/5 to-transparent hover:border-brand-lima dark:hover:border-brand-lima transition-all duration-500 group" data-aos="fade-up" data-aos-delay="0">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-turquesa/10 border border-brand-turquesa/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(16,82,56,0.15)]">
+                        <i class="fas fa-microchip text-3xl text-brand-turquesa dark:text-brand-accent group-hover:text-gray-900 dark:group-hover:text-brand-lima transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brand-turquesa dark:group-hover:text-white transition-colors">
+                        Algoritmo Dinámico
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                        Nuestro "Motor de Demanda" escanea inventarios vacíos 24h antes. Si detecta asientos libres, <span class="text-brand-turquesa dark:text-brand-accent">activa descuentos automáticos</span> para asegurar la ocupación completa.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-3xl border border-white/5 bg-gradient-to-b from-white/5 to-transparent hover:border-brand-lima dark:hover:border-brand-lima transition-all duration-500 group" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-turquesa/10 border border-brand-turquesa/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(16,82,56,0.15)]">
+                        <i class="fas fa-fingerprint text-3xl text-brand-turquesa dark:text-brand-accent group-hover:text-gray-900 dark:group-hover:text-brand-lima transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brand-turquesa dark:group-hover:text-white transition-colors">
+                        Atribución Inteligente
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                        Olvídate de vender puerta a puerta. Nuestra tecnología de cookies <span class="text-brand-turquesa dark:text-brand-accent font-semibold">rastrea quién hizo clic en tu enlace</span> y asigna la comisión a tu billetera instantáneamente.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-3xl border border-white/5 bg-gradient-to-b from-white/5 to-transparent hover:border-brand-lima dark:hover:border-brand-lima transition-all duration-500 group" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-turquesa/10 dark:bg-brand-accent/10 border border-brand-turquesa/20 dark:border-brand-accent/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(16,82,56,0.15)]">
+                        <i class="fas fa-handshake text-3xl text-brand-turquesa dark:text-brand-accent group-hover:text-gray-900 dark:group-hover:text-brand-lima transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brand-turquesa dark:group-hover:text-white transition-colors">
+                        Garantía al Aliado
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                        Para el Hotel o Agencia, es riesgo cero. El sistema <span class="text-brand-turquesa dark:text-brand-accent/80">garantiza el pago del 100%</span> al cerrarse el grupo, eliminando las pérdidas por cancelaciones de último minuto.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <script>
+            function triggerMarketplaceSim() {
+                const btn = document.getElementById('btn-market-sim');
+                if(btn.classList.contains('opacity-50')) return; // Prevenir doble click
+                
+                // 0. ESTADO INICIAL BOTÓN
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Procesando...';
+
+                // --- FASE 1: HOTEL (EL PROBLEMA) ---
+                // Simular llenado de barra y alerta
+                const hotelBar = document.getElementById('hotel-bar');
+                const hotelOcc = document.getElementById('hotel-occ-val');
+                const hotelStatus = document.getElementById('hotel-status');
+                const hotelOverlay = document.getElementById('hotel-action-overlay');
+                
+                document.getElementById('label-hotel').classList.remove('opacity-50'); // Highlight Label
+
+                setTimeout(() => {
+                    // Cambiar a verde (Solución)
+                    hotelBar.classList.replace('bg-red-500', 'bg-brand-turquesa');
+                    hotelBar.style.width = '80%'; // Simular que se llena gracias a la oferta
+                    hotelOcc.innerText = "80% (Proyectado)";
+                    hotelStatus.innerText = "✅ Optimizando Inventario...";
+                    hotelStatus.classList.replace('text-red-400', 'text-brand-turquesa');
+                    hotelStatus.classList.replace('bg-red-500/10', 'bg-brand-turquesa/10');
+                    hotelStatus.classList.replace('border-red-500/20', 'border-brand-turquesa/20');
+                }, 500);
+
+                setTimeout(() => {
+                    hotelOverlay.classList.remove('opacity-0'); // Overlay de "Oferta Enviada"
+                    // Activar flecha 1
+                    document.getElementById('arrow-1').classList.add('text-brand-turquesa', 'translate-x-2');
+                }, 1200);
+
+
+                // --- FASE 2: USUARIO (LA ACCIÓN) ---
+                setTimeout(() => {
+                    document.getElementById('label-user').classList.remove('opacity-50');
+                    
+                    // Apagar Radar, Encender UI
+                    document.getElementById('screen-radar').classList.add('opacity-0');
+                    const screenNotif = document.getElementById('screen-notif');
+                    screenNotif.classList.remove('opacity-0');
+                    
+                    // Entra Notificación Push
+                    setTimeout(() => {
+                        document.getElementById('notif-card').classList.remove('opacity-0', '-translate-y-4');
+                    }, 300);
+
+                    // Entra Botón Compartir
+                    setTimeout(() => {
+                        const shareBtn = document.getElementById('btn-share-mobile');
+                        shareBtn.classList.remove('opacity-0', 'translate-y-10');
+                        
+                        // Simular Click Automático en Compartir
+                        setTimeout(() => {
+                            shareBtn.classList.replace('bg-brand-turquesa', 'bg-brand-lima');
+                            shareBtn.classList.replace('dark:bg-brand-accent', 'dark:bg-brand-lima');
+                            shareBtn.classList.replace('text-white', 'text-brand-turquesa');
+                            shareBtn.innerHTML = '<i class="fas fa-check"></i> ENLACE ENVIADO';
+                            
+                            // Activar flecha 2
+                            document.getElementById('arrow-2').classList.add('text-brand-lima', 'translate-x-2');
+                        }, 800);
+                    }, 800);
+
+                }, 2000);
+
+
+                // --- FASE 3: RECOMPENSA (EL RESULTADO) ---
+                setTimeout(() => {
+                    document.getElementById('label-reward').classList.remove('opacity-50');
+                    
+                    document.getElementById('tx-placeholder').style.display = 'none';
+                    const txItem = document.getElementById('tx-item');
+                    txItem.classList.remove('opacity-0', 'translate-x-4');
+                    
+                    // Animar Dinero
+                    const walletAmount = document.getElementById('wallet-amount');
+                    animateMoney(walletAmount, 0, 12.00, 1000);
+                    document.getElementById('wallet-badge').classList.remove('opacity-0');
+
+                }, 4000);
+
+                // --- RESET ---
+                setTimeout(() => {
+                    // Resetear todo visualmente (simple fade out/in logic for brevity in UX)
+                    btn.innerHTML = '<i class="fas fa-check"></i> Ciclo Completado';
+                    btn.classList.replace('bg-brand-turquesa', 'bg-green-600');
+                    
+                    setTimeout(() => {
+                        // Volver al estado original (Recargar la ilusión de reactividad)
+                        // En producción podrías resetear clases una por una, 
+                        // aquí dejaremos el estado "Éxito" visible unos segundos.
+                        btn.innerHTML = 'Reiniciar Demo';
+                        btn.classList.remove('cursor-not-allowed', 'opacity-50');
+                        btn.classList.replace('bg-green-600', 'bg-brand-turquesa');
+                        btn.onclick = function() { window.location.href = '#experiencia'; location.reload(); }; // Truco rápido para reset full
+                    }, 2000);
+                }, 5500);
+            }
+
+            function animateMoney(obj, start, end, duration) {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    const value = (progress * (end - start) + start).toFixed(2);
+                    obj.innerHTML = "$" + value;
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+        </script>
+    </section>
+
+      <!-- =================================================================================
+         4. LIFESTYLE SECTION (El Concepto "Olas y Café")
+    ================================================================================== -->
+    <!-- =================================================================================
+         4. LIFESTYLE SECTION (El Concepto "Olas y Café" + 4 Extras)
+    ================================================================================== -->
+    <section id="experiencia" class="py-24 relative overflow-hidden bg-white dark:bg-[#0F1218]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-5xl font-['Avant_Garde',sans-serif] font-bold text-gray-900 dark:text-white mb-4">
+                    Más que un viaje,<br> <span class="italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-brand-turquesa via-brand-accent to-brand-lima">
+  es un ritual.
+</span>
+                </h2>
+                <div class="w-24 h-1 bg-brand-turquesa dark:bg-brand-accent mx-auto mb-6"></div>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+                    Hemos rediseñado la experiencia de ir al trabajo. Cambia el estrés del tráfico por vistas al mar, confort ejecutivo y un café recién hecho.
+                </p>
+            </div>
+
+            <!-- GRID DE 2 COLUMNAS (Mantiene el diseño grande y elegante) -->
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-16">
+                
+                <!-- 1. CAFÉ (Izquierda) -->
+                <div class="group relative h-[400px] rounded-3xl overflow-hidden cursor-pointer" data-aos="fade-right">
+                    <div class="absolute inset-0 bg-[url('{% static 'imagenes/barista.jpg' %}')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-8 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <div class="w-12 h-12 bg-brand-turquesa dark:bg-brand-accent rounded-full flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(16,82,56,0.4)]">
+                            <i class="fas fa-mug-hot text-xl"></i>
+                        </div>
+          <h3 class="text-2xl font-bold text-white mb-2">Conexión Montaña</h3>
+                        <p class="text-gray-200">Del calor de las olas a la neblina del café en un solo viaje. Conectamos la costa con Apaneca y Ataco.</p>
+                    </div>
+                </div>
+
+                <!-- 2. OLAS (Derecha) -->
+                <div class="group relative h-[400px] rounded-3xl overflow-hidden cursor-pointer" data-aos="fade-left">
+                    <div class="absolute inset-0 bg-[url('{% static 'imagenes/ruta-panoramica.jpg' %}')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-8 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <div class="w-12 h-12 bg-brand-turquesa dark:bg-brand-accent rounded-full flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(16,82,56,0.4)]">
+                            <i class="fas fa-water text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Ruta Panorámica</h3>
+                        <p class="text-gray-200">Rutas costeras diseñadas para inspirar. El mar es tu compañero de viaje.</p>
+                    </div>
+                </div>
+
+                <!-- 3. WI-FI (Izquierda) -->
+                <div class="group relative h-[400px] rounded-3xl overflow-hidden cursor-pointer" data-aos="fade-right">
+                    <div class="absolute inset-0 bg-[url('{% static 'imagenes/wifi.jpg' %}')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-8 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <div class="w-12 h-12 bg-brand-turquesa dark:bg-brand-accent rounded-full flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(16,82,56,0.4)]">
+                            <i class="fas fa-wifi text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Wi-Fi Ultra Rápido</h3>
+                        <p class="text-gray-200">Tu oficina móvil. Conexión 5G estable para videollamadas sin cortes.</p>
+                    </div>
+                </div>
+
+                <!-- 4. CONFORT (Derecha) -->
+                <div class="group relative h-[400px] rounded-3xl overflow-hidden cursor-pointer" data-aos="fade-left">
+                    <div class="absolute inset-0 bg-[url('{% static 'imagenes/wifi.jpg' %}')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-8 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <div class="w-12 h-12 bg-brand-turquesa dark:bg-brand-accent rounded-full flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(16,82,56,0.4)]">
+                            <i class="fas fa-couch text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Confort Ejecutivo</h3>
+                        <p class="text-gray-200">Asientos de cuero italiano con espacio extra y mesa de trabajo.</p>
+                    </div>
+                </div>
+
+                <!-- 5. SILENCIO (Izquierda) -->
+                <div class="group relative h-[400px] rounded-3xl overflow-hidden cursor-pointer" data-aos="fade-right">
+                    <div class="absolute inset-0 bg-[url('{% static 'imagenes/cabina-silenciosa.jpg' %}')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-8 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <div class="w-12 h-12 bg-brand-turquesa dark:bg-brand-accent rounded-full flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(16,82,56,0.4)]">
+                            <i class="fas fa-headphones-alt text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Cabina Silenciosa</h3>
+                        <p class="text-gray-200">Aislamiento acústico total. Relájate, lee o duerme sin el ruido de la ciudad.</p>
+                    </div>
+                </div>
+
+                <!-- 6. ECO (Derecha) -->
+                <div class="group relative h-[400px] rounded-3xl overflow-hidden cursor-pointer" data-aos="fade-left">
+                    <div class="absolute inset-0 bg-[url('{% static 'imagenes/movilidad-verde.jpg' %}')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-8 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <div class="w-12 h-12 bg-brand-turquesa dark:bg-brand-accent rounded-full flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(16,82,56,0.4)]">
+                            <i class="fas fa-leaf text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Movilidad Verde</h3>
+                        <p class="text-gray-200">Flota 100% eléctrica. Viaja con estilo reduciendo tu huella de carbono.</p>
+                    </div>
+                </div>
+
+            </div> <!-- Cierre del Grid -->
+        </div>
+    </section>
+
+    <!-- =================================================================================
+         SECTION: RUTAS LIVE (The $100+ Command Center Look - TARGET LOCK FIXED)
+    ================================================================================== -->
+    <section id="rutas" class="relative py-24 bg-[#f0f2f5] dark:bg-[#020408] overflow-hidden">
+        
+        <!-- 1. Background Map Texture -->
+        <div class="absolute inset-0 z-0 opacity-30">
+            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover grayscale" alt="Dark Map Background">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#020408] via-[#020408]/90 to-transparent"></div>
+            <div class="absolute inset-0 bg-[#f0f2f5] dark:bg-[#020408]/50 backdrop-blur-[1px]"></div>
+        </div>
+
+        <!-- Decoración de Fondo (Glows) -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-turquesa/10 dark:bg-brand-accent/5 rounded-full blur-[100px] animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/5 rounded-full blur-[100px] animate-pulse" style="animation-delay: 1s;"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Header de Sección -->
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                <div data-aos="fade-right">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="relative flex h-3 w-3">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-turquesa opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-turquesa"></span>
+                        </span>
+                        <span class="text-brand-turquesa dark:text-brand-accent font-mono text-xs uppercase tracking-widest">Sistema Operativo v2.6</span>
+                    </div>
+                   <h2 class="text-4xl md:text-5xl font-sans font-bold text-gray-900 dark:text-white">
+  Monitoreo de Flota
+  <span class="italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-brand-turquesa via-brand-accent to-brand-lima">
+    En Vivo
+  </span>
+</h2>
+                </div>
+                
+                <!-- Stats Rápidas -->
+                <div class="hidden md:flex gap-8 text-right" data-aos="fade-left">
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider">Unidades Activas</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white font-mono">24/24</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider">Latencia GPS</p>
+                        <p class="text-2xl font-bold text-brand-turquesa dark:text-brand-accent font-mono" id="latency-stat">~10ms</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD PRINCIPAL -->
+            <div class="rounded-3xl border border-black/5 dark:border-white/10 bg-white dark:bg-[#0B0F19]/80 backdrop-blur-xl shadow-lg dark:shadow-2xl overflow-hidden grid lg:grid-cols-3 min-h-[600px]" data-aos="fade-up" data-aos-duration="1000">
+                
+                <!-- COLUMNA IZQUIERDA: Selector de Rutas -->
+                <div class="lg:col-span-1 border-r border-white/5 p-6 flex flex-col">
+                    <h3 class="text-gray-900 dark:text-white font-bold mb-6 text-sm uppercase tracking-wider border-b border-white/5 pb-4">Rutas Disponibles</h3>
+                    
+                    <div class="space-y-4 flex-grow overflow-y-auto pr-2 custom-scrollbar">
+                        
+                        <!-- 1. INICIO (Ruta 3) -->
+                        <div id="card-route-3" onclick="updateMap('route-3')" class="route-card p-4 rounded-xl bg-gradient-to-r from-brand-lima/20 to-transparent border border-brand-lima/30 cursor-pointer transition hover:bg-black/5 dark:hover:bg-white/5 group relative overflow-hidden ring-1 ring-brand-lima/50">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-gray-700 text-white text-[10px] font-bold px-2 py-1 rounded">R-300</span>
+                                <span class="text-brand-turquesa dark:text-brand-lima text-xs font-mono animate-pulse font-bold">● Iniciando</span>
+                            </div>
+                            <h4 class="text-gray-900 dark:text-white font-bold text-lg group-hover:text-brand-turquesa dark:text-brand-accent transition">Nocturno Beach</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">Salida: Terminal Central</p>
+                            <div class="w-full bg-black/10 dark:bg-black/50 h-1 mt-3 rounded-full overflow-hidden">
+                                <div class="bg-brand-lima h-full w-[5%]"></div>
+                            </div>
+                        </div>
+
+                        <!-- 2. MEDIO (Ruta 1) -->
+                        <div id="card-route-1" onclick="updateMap('route-1')" class="route-card p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 cursor-pointer transition hover:bg-black/10 dark:hover:bg-white/10 group relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-brand-turquesa dark:bg-brand-accent text-white dark:text-gray-900 text-[10px] font-bold px-2 py-1 rounded">R-101</span>
+                                <span class="text-brand-turquesa dark:text-brand-accent text-xs font-mono">● En Tránsito</span>
+                            </div>
+                            <h4 class="text-gray-900 dark:text-white font-bold text-lg group-hover:text-brand-turquesa dark:text-brand-accent transition">Expreso Costero</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">Próx: Playa Blanca</p>
+                            <div class="w-full bg-black/10 dark:bg-black/50 h-1 mt-3 rounded-full overflow-hidden">
+                                <div class="bg-brand-turquesa dark:bg-brand-accent h-full w-[50%] shadow-[0_0_10px_rgba(16,82,56,0.5)]"></div>
+                            </div>
+                        </div>
+
+                        <!-- 3. FINAL (Ruta 2) -->
+                        <div id="card-route-2" onclick="updateMap('route-2')" class="route-card p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 cursor-pointer transition hover:bg-black/10 dark:hover:bg-white/10 group relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-gray-700 text-white text-[10px] font-bold px-2 py-1 rounded">R-205</span>
+                                <span class="text-emerald-600 dark:text-emerald-500 text-xs font-mono">● Finalizado</span>
+                            </div>
+                            <h4 class="text-gray-900 dark:text-white font-bold text-lg group-hover:text-brand-turquesa dark:text-brand-accent transition">Ruta Cafetalera</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">Llegada: Centro Histórico</p>
+                             <div class="w-full bg-black/10 dark:bg-black/50 h-1 mt-3 rounded-full overflow-hidden">
+                                <div class="bg-emerald-600 dark:bg-emerald-500 h-full w-[100%]"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button onclick="scanLocation()" id="btn-scan" class="w-full mt-6 py-3 border border-white/20 rounded-lg text-gray-900 dark:text-white text-sm hover:bg-white/10 transition flex items-center justify-center gap-2 overflow-hidden relative group">
+                        <span class="relative z-10 flex items-center gap-2 group-hover:text-brand-turquesa dark:text-brand-accent transition"><i class="fas fa-satellite-dish"></i> <span id="btn-text">Escanear Zona</span></span>
+                        <div id="scan-bar" class="absolute inset-0 bg-brand-turquesa dark:bg-brand-accent/20 translate-x-[-100%] transition-transform duration-1000"></div>
+                    </button>
+                </div>
+
+                <!-- COLUMNA DERECHA: Mapa Interactivo -->
+                <div class="lg:col-span-2 relative bg-gray-100 dark:bg-[#050810] group-map overflow-hidden border-t lg:border-t-0 lg:border-l border-white/5">
+                    
+                    <!-- ID AGREGADO PARA REFERENCIA JS EXACTA -->
+                    <div id="map-container" class="absolute top-8 right-8 bottom-8 left-8">
+                        
+                        <!-- Capa de Escaneo -->
+                        <div id="scanner-overlay" class="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-500 z-40 flex items-center justify-center">
+                            <div class="w-full h-full rounded-full border border-brand-turquesa/20 bg-brand-turquesa/5 animate-[ping_2s_linear_infinite]"></div>
+                            <div class="absolute w-full h-[2px] bg-brand-turquesa/50 shadow-neon-turquesa animate-[spin_3s_linear_infinite]"></div>
+                            <div class="absolute top-0 left-0 text-brand-turquesa font-mono text-[10px] tracking-widest">
+                                <span class="animate-pulse">SECTOR SCAN...</span>
+                            </div>
+                        </div>
+
+                        <!-- Mira Telescópica (Reticle) -->
+                        <!-- NOTA: transform se aplica via JS para centrar perfectamente -->
+                        <div id="target-reticle" class="absolute w-24 h-24 border border-brand-turquesa/50 opacity-0 transition-all duration-300 z-50 pointer-events-none flex items-center justify-center origin-center">
+                             <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-brand-turquesa"></div>
+                             <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-brand-turquesa"></div>
+                             <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-brand-turquesa"></div>
+                             <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-brand-turquesa"></div>
+                             <div class="text-[8px] text-brand-turquesa font-mono mt-20 bg-white/90 dark:bg-black/80 px-2 py-1 rounded border border-brand-turquesa/30 whitespace-nowrap">
+                                TARGET LOCKED <span class="animate-pulse">●</span>
+                             </div>
+                        </div>
+
+                        <!-- Fondo Grid -->
+                        <div class="absolute inset-0 hidden dark:block" style="background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 20px 20px; opacity: 0.2;"></div>
+                        <div class="absolute inset-0 block dark:hidden" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5;"></div>
+                         
+                        <!-- SVG MAPA -->
+                        <svg id="map-svg" class="w-full h-full drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] transition-all duration-700" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                            <path d="M50 350 C 150 350, 150 200, 300 200 C 450 200, 450 50, 550 50" class="stroke-brand-accent opacity-30 dark:opacity-20" stroke-width="8" stroke-linecap="round"/>
+                            <path id="active-path" d="M50 350 C 70 350, 90 350, 110 345" stroke="#c4d551" stroke-width="4" stroke-linecap="round" class="transition-all duration-1000 ease-out" />
+                            
+                            <!-- Elementos Fijos -->
+                            <g transform="translate(30, 330)">
+                                <rect width="40" height="40" rx="8" class="fill-white dark:fill-[#0f172a] stroke-gray-300 dark:stroke-[#334155]" stroke-width="2"/>
+                                <text x="20" y="25" font-family="monospace" font-size="10" class="fill-gray-500 dark:fill-[#94a3b8]" text-anchor="middle">HUB</text>
+                            </g>
+                            <g transform="translate(530, 30)">
+                                <circle cx="20" cy="20" r="15" class="fill-white dark:fill-[#0f172a] stroke-gray-300 dark:stroke-[#334155]" stroke-width="2"/>
+                                <text x="20" y="24" font-family="FontAwesome" font-size="12" class="fill-gray-500 dark:fill-[#94a3b8]" text-anchor="middle">&#xf02d;</text>
+                            </g>
+                        </svg>
+
+                        <!-- BUS MARKER -->
+                        <div id="bus-marker" class="absolute transition-all duration-1000 ease-in-out z-20" style="top: 87.5%; left: 8.3333%;">
+                            <div class="absolute -top-20 -left-16 bg-gradient-to-br from-white to-gray-50 dark:from-[#0B0F19] dark:to-black backdrop-blur-md border border-gray-200 dark:border-gray-800 p-3 rounded-lg shadow-xl w-48 animate-bounce" style="animation-duration: 3s; z-index: 50;">
+                                <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-2 mb-2">
+                                    <span class="font-bold text-xs text-gray-900 dark:text-white" id="bus-id">Bus #05</span>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                                        <span class="text-[10px] text-gray-600 dark:text-gray-400 font-mono" id="bus-speed">0 km/h</span>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate" id="bus-dest">Saliendo de Terminal</p>
+                                <div class="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-50 dark:bg-black rotate-45 border-r border-b border-gray-200 dark:border-gray-800"></div>
+                            </div>
+                            
+                            <!-- ID BUS-ICON-BG usado para calcular centro -->
+                            <div class="w-14 h-14 bg-gray-50 dark:bg-[#0B0F19] rounded-full border-2 border-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.4)] flex items-center justify-center relative z-10 transition-colors duration-500 transform -translate-x-1/2 -translate-y-1/2 group" id="bus-icon-bg">
+                                <i class="fas fa-bus text-yellow-500 text-lg group-hover:scale-110 transition-transform"></i>
+                            </div>
+                            <div class="absolute top-1/2 left-1/2 w-full h-full bg-yellow-500 rounded-full animate-ping opacity-20 transition-colors duration-500 transform -translate-x-1/2 -translate-y-1/2" id="bus-ping"></div>
+                        </div>
+
+                    </div> <!-- Fin contenedor unificado -->
+
+                    <!-- Panel de Datos -->
+                    <div class="absolute bottom-6 right-6 bg-gray-50 dark:bg-[#0B0F19]/90 backdrop-blur-md border border-white/10 rounded-xl p-5 w-72 shadow-2xl transition-all duration-500 z-30" id="metrics-panel">
+                        <div class="flex items-center justify-between mb-4">
+                            <h5 class="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-widest font-bold">Telemetría</h5>
+                            <i class="fas fa-signal text-green-500 text-xs"></i>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-900 dark:text-white mb-1.5">
+                                    <span class="text-gray-600 dark:text-gray-400"><i class="fas fa-users mr-1"></i> Ocupación</span>
+                                    <span class="text-green-400 font-mono" id="metric-occ-text">10%</span>
+                                </div>
+                                <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden border border-white/5">
+                                    <div id="metric-occ-bar" class="bg-yellow-500 h-full w-[10%] transition-all duration-1000 relative">
+                                        <div class="absolute right-0 top-0 bottom-0 w-1 bg-white/50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-900 dark:text-white mb-1.5">
+                                    <span class="text-gray-600 dark:text-gray-400"><i class="fas fa-road mr-1"></i> Tráfico</span>
+                                    <span class="text-brand-turquesa dark:text-brand-accent font-mono" id="metric-traffic-text">Fluido</span>
+                                </div>
+                                <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden border border-white/5">
+                                    <div id="metric-traffic-bar" class="bg-gray-600 h-full w-[10%] transition-all duration-1000 relative">
+                                        <div class="absolute right-0 top-0 bottom-0 w-1 bg-white/50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center items-center gap-6 text-gray-500 dark:text-gray-400 text-xs font-mono opacity-100 dark:opacity-60">
+                <span><i class="fas fa-circle text-[8px] text-green-500 mr-1"></i> AWS US-EAST-1</span>
+                <span>•</span>
+                <span>SYNC: 200 OK</span>
+                <span>•</span>
+                <span>WSS://SECURE</span>
+            </div>
+
+        </div>
+
+        <script>
+    // DATOS DE RUTA (Fuente de la verdad)
+    const routeData = {
+        'route-3': {
+            busId: 'Bus #05', speed: '12 km/h', dest: 'Saliendo de Terminal',
+            pathD: "M50 350 C 70 350, 90 350, 110 345", 
+            color: '#c4d551', pos: { top: '87.5%', left: '8.3333%' }, // brand-lima
+            occText: '10% (Abordando)', occColor: 'bg-brand-lima', occW: '10%',
+            trfText: 'Fluido', trfColor: 'bg-brand-lima', trfW: '10%'
+        },
+        'route-1': {
+            busId: 'Bus #42', speed: '45 km/h', dest: 'Destino: Playa Blanca',
+            pathD: "M50 350 C 150 350, 150 200, 300 200 C 450 200, 450 50, 550 50", 
+            color: '#105238', pos: { top: '50%', left: '50%' }, // brand-turquesa
+            occText: '50% (Medio)', occColor: 'bg-brand-turquesa', occW: '50%',
+            trfText: 'Moderado', trfColor: 'bg-brand-turquesa', trfW: '60%'
+        },
+        'route-2': {
+            busId: 'Bus #88', speed: '0 km/h', dest: 'Llegada: Centro',
+            pathD: "M50 350 C 150 350, 150 200, 300 200 C 450 200, 450 50, 550 50", 
+            color: '#059669', pos: { top: '12.5%', left: '91.6666%' }, // emerald-600
+            occText: '0% (Descargando)', occColor: 'bg-emerald-600', occW: '100%',
+            trfText: 'Finalizado', trfColor: 'bg-emerald-600', trfW: '100%'
+        }
+    };
+
+    function updateMap(routeId) {
+        const data = routeData[routeId];
+        if (!data) return;
+
+        // 1. Actualizar estado visual de las tarjetas (Active State)
+        document.querySelectorAll('.route-card').forEach(card => {
+            card.className = "route-card p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 cursor-pointer transition hover:bg-black/10 dark:hover:bg-white/10 group relative overflow-hidden";
+        });
+        const activeCard = document.getElementById('card-' + routeId);
+        const themeColor = routeId === 'route-2' ? 'emerald-600 dark:emerald-500' : (routeId === 'route-3' ? 'brand-lima' : 'brand-turquesa dark:border-brand-accent');
+        
+        // Custom logic for classes to avoid Tailwind dynamic class issues
+        let activeClasses = "";
+        if (routeId === 'route-3') {
+            activeClasses = "route-card p-4 rounded-xl bg-gradient-to-r from-brand-lima/20 to-transparent border border-brand-lima/30 cursor-pointer transition group relative overflow-hidden ring-1 ring-brand-lima/50";
+        } else if (routeId === 'route-1') {
+            activeClasses = "route-card p-4 rounded-xl bg-gradient-to-r from-brand-turquesa/10 dark:from-brand-accent/20 to-transparent border border-brand-turquesa/30 dark:border-brand-accent/30 cursor-pointer transition group relative overflow-hidden ring-1 ring-brand-turquesa/30 dark:ring-brand-accent/50";
+        } else {
+            activeClasses = "route-card p-4 rounded-xl bg-gradient-to-r from-emerald-600/10 dark:from-emerald-500/20 to-transparent border border-emerald-600/30 dark:border-emerald-500/30 cursor-pointer transition group relative overflow-hidden ring-1 ring-emerald-600/30 dark:ring-emerald-500/50";
+        }
+        activeCard.className = activeClasses;
+
+        // 2. Mover el Bus (Usando porcentajes CSS para consistencia)
+        const busMarker = document.getElementById('bus-marker');
+        busMarker.style.top = data.pos.top;
+        busMarker.style.left = data.pos.left;
+
+        // 3. Actualizar Datos del Bus
+        document.getElementById('bus-id').innerText = data.busId;
+        document.getElementById('bus-speed').innerText = data.speed;
+        document.getElementById('bus-dest').innerText = data.dest;
+        document.getElementById('bus-id').style.color = data.color;
+
+        // 4. Estilizar Icono
+        const busBg = document.getElementById('bus-icon-bg');
+        const busPing = document.getElementById('bus-ping');
+        const busIcon = busBg.querySelector('i');
+        
+        busBg.style.borderColor = data.color;
+        busIcon.style.color = data.color;
+        
+        // Remove dynamic logic and rely on inline styles for color to support both themes
+        busIcon.className = `fas fa-bus text-lg group-hover:scale-110 transition-transform`;
+        busPing.style.backgroundColor = data.color;
+
+        // 5. Dibujar Ruta SVG
+        const activePath = document.getElementById('active-path');
+        activePath.setAttribute('d', data.pathD);
+        activePath.setAttribute('stroke', data.color);
+
+        // 6. Actualizar Métricas
+        updateMetric('metric-occ', data.occText, data.occW, data.occColor);
+        updateMetric('metric-traffic', data.trfText, data.trfW, data.trfColor);
+    }
+
+    function updateMetric(idPrefix, text, width, colorClass) {
+        document.getElementById(idPrefix + '-text').innerText = text;
+        const bar = document.getElementById(idPrefix + '-bar');
+        bar.style.width = width;
+        // Limpiar clases de color anteriores y añadir la nueva
+        bar.className = `h-full transition-all duration-1000 relative ${colorClass}`;
+        // Re-añadir el brillo si se perdió
+        bar.innerHTML = '<div class="absolute right-0 top-0 bottom-0 w-1 bg-white/50"></div>';
+    }
+
+    function scanLocation() {
+    const btnText = document.getElementById('btn-text');
+    const scanBar = document.getElementById('scan-bar');
+    
+    const overlay = document.getElementById('scanner-overlay'); // El Radar
+    const busMarker = document.getElementById('bus-marker');    // El Bus
+    const reticle = document.getElementById('target-reticle');  // El Cuadrito
+
+    // 1. UI Feedback
+    btnText.innerText = "Sintonizando Satélite...";
+    scanBar.style.transform = "translateX(0%)";
+    
+    // --- CORRECCIÓN DEL RADAR (Línea + Círculo) ---
+    // A. Limpiamos las clases que lo pegan a la pantalla completa
+    overlay.className = "absolute z-40 flex items-center justify-center pointer-events-none transition-opacity duration-500";
+    
+    // B. Le damos un tamaño GRANDE fijo (para que el círculo y la línea se vean)
+    overlay.style.width = '600px'; 
+    overlay.style.height = '600px'; 
+    
+    // C. Lo movemos a la posición del bus
+    overlay.style.top = busMarker.style.top;
+    overlay.style.left = busMarker.style.left;
+    
+    // D. Lo centramos perfectamente sobre el bus
+    overlay.style.transform = "translate(-50%, -50%)";
+    
+    // E. Lo mostramos
+    overlay.classList.remove('opacity-0');
+
+    // --- MANEJO DEL CUADRITO (Reticle) ---
+    if (reticle.parentElement !== busMarker) {
+        busMarker.appendChild(reticle);
+        reticle.style.position = 'absolute';
+        reticle.style.top = '0';
+        reticle.style.left = '0';
+        reticle.style.zIndex = '50';
+    }
+
+    // Animación de entrada del cuadrito
+    reticle.style.transform = "translate(-50%, -50%) scale(2)"; 
+    reticle.classList.remove('opacity-0');
+
+    // SECUENCIA DE TIEMPOS
+    setTimeout(() => {
+        // LOCK
+        reticle.style.transform = "translate(-50%, -50%) scale(1)";
+        reticle.classList.add('drop-shadow-[0_0_10px_rgba(74,222,128,0.9)]');
+        
+        btnText.innerText = "OBJETIVO FIJADO";
+        btnText.classList.add('text-green-400', 'font-bold');
+        document.getElementById('btn-scan').classList.add('ring-1', 'ring-green-500');
+    }, 800);
+
+    setTimeout(() => { 
+        scanBar.style.transform = "translateX(100%)"; 
+    }, 600);
+    
+    // RESET FINAL
+    setTimeout(() => {
+        btnText.innerText = "Escanear Zona";
+        btnText.classList.remove('text-green-400', 'font-bold');
+        document.getElementById('btn-scan').classList.remove('ring-1', 'ring-green-500');
+        scanBar.style.transform = "translateX(-100%)";
+        
+        overlay.classList.add('opacity-0');
+        reticle.classList.add('opacity-0');
+        reticle.classList.remove('drop-shadow-[0_0_10px_rgba(74,222,128,0.9)]');
+    }, 3500);
+}
+</script>
+    </section>
+
+    <!-- =================================================================================
+         5. TECH SPECS (Grid Bento Style)
+    ================================================================================== -->
+   <section id="tecnologia" class="py-24 bg-[#f0f2f5] dark:bg-[#020408] relative overflow-hidden select-none">
+    
+    <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-turquesa/10 dark:bg-brand-accent/5 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        <div class="text-center mb-12" data-aos="fade-up">
+            <span class="text-brand-turquesa dark:text-brand-accent font-bold tracking-[0.3em] uppercase text-xs mb-3 block animate-pulse">Economía Descentralizada</span>
+            <h2 class="text-4xl md:text-6xl font-['Avant_Garde',sans-serif] font-bold text-gray-900 dark:text-white mb-6">
+                El Efecto <span class="italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-brand-turquesa via-brand-accent to-brand-lima">Pool</span>
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg font-light leading-relaxed">
+                Activa el simulador y descubre cómo un gasto de $100 se convierte en una ganancia personal.
+            </p>
+        </div>
+
+        <div class="glass-panel max-w-4xl mx-auto rounded-[2rem] p-1 border border-black/5 dark:border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.1)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] relative transition-all duration-700" id="reactor-core">
+            
+            <div id="reactor-glow" class="absolute inset-0 hidden dark:block bg-gradient-to-r from-gray-800 to-black rounded-[2rem] opacity-50 transition-all duration-700"></div>
+
+            <div class="relative bg-gray-50 dark:bg-[#0B0F19] rounded-[1.8rem] p-8 md:p-12 overflow-hidden grid md:grid-cols-2 gap-12 items-center">
+                
+                <div class="z-10">
+                    <div class="flex items-center justify-between mb-8">
+                        <span class="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-widest font-bold">Modo de Viaje</span>
+                        
+                        <div class="relative inline-flex items-center cursor-pointer group" onclick="togglePoolSystem()">
+                            <input type="checkbox" id="pool-toggle" class="sr-only peer">
+                            <div class="w-16 h-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-inner peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-8 peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-brand-turquesa dark:after:bg-brand-accent peer-checked:after:bg-white after:border-2 after:border-white dark:after:border-transparent after:rounded-full after:h-[26px] after:w-[26px] after:transition-all after:duration-300 peer-checked:bg-brand-turquesa dark:peer-checked:bg-brand-accent peer-checked:shadow-[0_0_20px_rgba(196,213,81,0.6)]"></div>
+                            <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-brand-lima dark:group-hover:text-brand-lima transition-colors" id="toggle-label">Solo</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <p class="text-gray-500 text-sm mb-2">Costo por Persona</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-6xl md:text-7xl font-bold text-gray-900 dark:text-white tracking-tighter transition-all duration-500" id="price-display">$100</span>
+                            <span class="text-xl text-gray-600 line-through transition-opacity duration-500 opacity-0" id="old-price">$100</span>
+                        </div>
+                        <p class="text-brand-turquesa dark:text-brand-accent font-bold text-sm mt-2 font-mono opacity-0 transition-all duration-500 transform translate-y-4" id="savings-badge">
+                            <i class="fas fa-arrow-down"></i> Ahorras 75% instantáneamente
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-4 transition-all duration-700 opacity-90" id="avatars-container">
+                        <div class="flex -space-x-3">
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-[#0B0F19] bg-brand-turquesa dark:bg-brand-accent flex items-center justify-center text-xs font-bold text-white dark:text-gray-900 z-30 relative transition-transform duration-300 hover:scale-110" id="avatar-1">Yo</div>
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-[#0B0F19] bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs text-gray-600 dark:text-gray-300 z-20 scale-0 transition-all duration-300 delay-100" id="avatar-2"><i class="fas fa-user"></i></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-[#0B0F19] bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs text-gray-600 dark:text-gray-300 z-10 scale-0 transition-all duration-300 delay-200" id="avatar-3"><i class="fas fa-user"></i></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-[#0B0F19] bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs text-gray-600 dark:text-gray-300 z-0 scale-0 transition-all duration-300 delay-300" id="avatar-4"><i class="fas fa-user"></i></div>
+                        </div>
+                        <span class="text-xs text-brand-turquesa dark:text-brand-accent font-bold uppercase tracking-wider" id="participants-text">1 Pasajero</span>
+                    </div>
+                </div>
+
+                <div class="z-10 relative h-full flex flex-col justify-center border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-12">
+                    
+                    <div id="state-solo" class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 transition-all duration-500 opacity-100 transform scale-100">
+                        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10">
+                            <i class="fas fa-wallet text-3xl text-gray-500"></i>
+                        </div>
+                        <h4 class="text-xl text-gray-700 dark:text-gray-300 font-bold">Modo Individual</h4>
+                        <p class="text-sm text-gray-500 mt-2">Asumes el 100% del costo. Sin retorno de inversión.</p>
+                        <p class="text-xs text-red-400 mt-4 animate-pulse">Activa el Pool para ver la magia →</p>
+                    </div>
+
+                    <div id="state-pool" class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 transition-all duration-500 opacity-0 transform scale-90 pointer-events-none">
+                        <div class="bg-gradient-to-r from-brand-turquesa to-brand-lima border border-brand-lima/30 p-6 rounded-2xl w-full shadow-[0_0_30px_rgba(16,82,56,0.3)] relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-white/10 transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                            
+                            <div class="flex justify-between items-center mb-4 relative z-10">
+                                <span class="text-white font-bold text-xs uppercase tracking-widest"><i class="fas fa-crown mr-2 text-brand-lima"></i>Comisión Creador</span>
+                                <span class="bg-black/20 text-white text-[10px] px-2 py-1 rounded border border-white/20">5% Cashback</span>
+                            </div>
+                            
+                            <div class="text-4xl font-bold text-white mb-1 drop-shadow-md relative z-10">+$3.75</div>
+                            <p class="text-xs text-white/80 mb-4 relative z-10">Ganado por invitar a 3 amigos</p>
+                            
+                            <div class="border-t border-white/20 pt-4 pb-6 mt-2 flex justify-between items-center relative z-10">
+                                <span class="text-white/90 text-xs">Costo Real Final:</span>
+                                <span class="text-2xl font-bold text-white drop-shadow-md">$21.25</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-gray-500 mt-4">Calculado sobre base de $100 </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 transition-all duration-500" id="benefits-grid">
+            <div class="bg-gray-200 dark:bg-gray-800 p-6 rounded-2xl border border-gray-300 dark:border-gray-700 transition-all duration-500 benefit-card group hover:border-brand-lima dark:hover:border-brand-lima">
+                <div class="w-12 h-12 rounded-xl bg-brand-turquesa/10 dark:bg-brand-accent/10 border border-brand-turquesa/20 dark:border-brand-accent/20 flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110 shadow-[0_0_15px_rgba(16,82,56,0.15)]">
+                    <i class="fas fa-home text-2xl text-brand-turquesa dark:text-brand-accent group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-500" id="icon-1"></i>
+                </div>
+                <h3 class="text-gray-900 dark:text-white font-bold mb-2">Acceso a Lujo</h3>
+                <p class="text-xs text-gray-600 dark:text-gray-400">Villas de $1,000 por solo $125/persona.</p>
+            </div>
+            <div class="bg-gray-200 dark:bg-gray-800 p-6 rounded-2xl border border-gray-300 dark:border-gray-700 transition-all duration-500 benefit-card group hover:border-brand-lima dark:hover:border-brand-lima">
+                <div class="w-12 h-12 rounded-xl bg-brand-turquesa/10 dark:bg-brand-accent/10 border border-brand-turquesa/20 dark:border-brand-accent/20 flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110 shadow-[0_0_15px_rgba(16,82,56,0.15)]">
+                    <i class="fas fa-chart-line text-2xl text-brand-turquesa dark:text-brand-accent group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-500" id="icon-2"></i>
+                </div>
+                <h3 class="text-gray-900 dark:text-white font-bold mb-2">Viaja Gratis</h3>
+                <p class="text-xs text-gray-600 dark:text-gray-400">Organiza grupos grandes y tu estancia se paga sola.</p>
+            </div>
+            <div class="bg-gray-200 dark:bg-gray-800 p-6 rounded-2xl border border-gray-300 dark:border-gray-700 transition-all duration-500 benefit-card group hover:border-brand-lima dark:hover:border-brand-lima">
+                <div class="w-12 h-12 rounded-xl bg-brand-turquesa/10 dark:bg-brand-accent/10 border border-brand-turquesa/20 dark:border-brand-accent/20 flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110 shadow-[0_0_15px_rgba(16,82,56,0.15)]">
+                    <i class="fas fa-shield-alt text-2xl text-brand-turquesa dark:text-brand-accent group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-500" id="icon-3"></i>
+                </div>
+                <h3 class="text-gray-900 dark:text-white font-bold mb-2">Pago Garantizado</h3>
+                <p class="text-xs text-gray-600 dark:text-gray-400">Cobro automático QR. Cero riesgo para el anfitrión.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let isPoolActive = false;
+
+        function togglePoolSystem() {
+            isPoolActive = !isPoolActive;
+            const toggle = document.getElementById('pool-toggle');
+            toggle.checked = isPoolActive; // Sincronizar checkbox si se llama desde click externo
+
+            // ELEMENTOS A MANIPULAR
+            const priceDisplay = document.getElementById('price-display');
+            const oldPrice = document.getElementById('old-price');
+            const savingsBadge = document.getElementById('savings-badge');
+            const avatarsContainer = document.getElementById('avatars-container');
+            const reactorGlow = document.getElementById('reactor-glow');
+            const label = document.getElementById('toggle-label');
+            const participantsText = document.getElementById('participants-text');
+
+            // ESTADOS (SOLO / POOL)
+            const stateSolo = document.getElementById('state-solo');
+            const statePool = document.getElementById('state-pool');
+
+            if (isPoolActive) {
+                // === ACTIVAR MODO POOL ===
+                label.innerText = "Pool Activo";
+                label.classList.add('text-brand-turquesa'); label.classList.add('dark:text-brand-accent');
+                
+                // 1. Animación de Precio (Count Down Effect simulado)
+                animateValue(priceDisplay, 100, 25, 500);
+                oldPrice.classList.remove('opacity-0');
+                
+                // 2. Badges y Glows
+                savingsBadge.classList.remove('opacity-0', 'translate-y-4');
+                reactorGlow.className = "absolute inset-0 bg-gradient-to-r from-brand-turquesa dark:from-brand-accent/20 to-brand-dark rounded-[2rem] opacity-100 transition-all duration-700 border border-brand-turquesa dark:border-brand-accent/30";
+                
+                // 3. Avatares
+                avatarsContainer.classList.remove('opacity-90');
+                document.getElementById('avatar-2').classList.remove('scale-0');
+                document.getElementById('avatar-3').classList.remove('scale-0');
+                document.getElementById('avatar-4').classList.remove('scale-0');
+                participantsText.innerText = "4 Pasajeros (Pool Completo)";
+                participantsText.classList.add('text-brand-turquesa', 'dark:text-brand-accent'); participantsText.classList.remove('text-gray-500');
+
+                // 4. Transición de Estado (Derecha)
+                stateSolo.style.opacity = '0';
+                stateSolo.style.transform = 'scale(0.9)';
+                
+                statePool.style.opacity = '1';
+                statePool.style.transform = 'scale(1)';
+                statePool.style.pointerEvents = 'auto';
+
+                // 5. Activar Grid de Beneficios (Efecto Cascada)
+                updateBenefits(true);
+
+            } else {
+                // === DESACTIVAR (MODO SOLO) ===
+                label.innerText = "Solo";
+                label.classList.remove('text-brand-turquesa'); label.classList.remove('dark:text-brand-accent');
+
+                // 1. Precio
+                animateValue(priceDisplay, 25, 100, 500);
+                oldPrice.classList.add('opacity-0');
+
+                // 2. Badges
+                savingsBadge.classList.add('opacity-0', 'translate-y-4');
+                reactorGlow.className = "absolute inset-0 bg-gradient-to-r from-gray-800 to-black rounded-[2rem] opacity-50 transition-all duration-700";
+
+                // 3. Avatares
+                avatarsContainer.classList.add('opacity-90');
+                document.getElementById('avatar-2').classList.add('scale-0');
+                document.getElementById('avatar-3').classList.add('scale-0');
+                document.getElementById('avatar-4').classList.add('scale-0');
+                participantsText.innerText = "1 Pasajero";
+
+                // 4. Transición de Estado
+                statePool.style.opacity = '0';
+                statePool.style.transform = 'scale(0.9)';
+                statePool.style.pointerEvents = 'none';
+
+                stateSolo.style.opacity = '1';
+                stateSolo.style.transform = 'scale(1)';
+
+                // 5. Desactivar Grid
+                updateBenefits(false);
+            }
+        }
+
+        // Función auxiliar para animar números
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = "$" + value;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Función para iluminar las tarjetas de abajo
+        function updateBenefits(active) {
+            const cards = document.querySelectorAll('.benefit-card');
+            const icons = [document.getElementById('icon-1'), document.getElementById('icon-2'), document.getElementById('icon-3')];
+            const colors = [['text-brand-turquesa', 'dark:text-brand-accent'], ['text-blue-500'], ['text-green-500']];
+
+            cards.forEach((card, index) => {
+                if (active) {
+                    card.classList.remove('bg-gray-200', 'dark:bg-gray-800', 'border-gray-300', 'dark:border-gray-700');
+                    card.classList.add('bg-white', 'dark:bg-gray-700', 'border-brand-turquesa', 'dark:border-brand-accent', 'shadow-lg');
+                    icons[index].classList.remove('text-gray-500');
+                    icons[index].classList.add(...colors[index]);
+                } else {
+                    card.classList.add('bg-gray-200', 'dark:bg-gray-800', 'border-gray-300', 'dark:border-gray-700');
+                    card.classList.remove('bg-white', 'dark:bg-gray-700', 'border-brand-turquesa', 'dark:border-brand-accent', 'shadow-lg');
+                    icons[index].classList.add('text-gray-500');
+                    icons[index].classList.remove(...colors[index]);
+                }
+            });
+        }
+    </script>
+</section>
+
+    <!-- =================================================================================
+         6. APP SHOWCASE / DOWNLOAD (Parallax)
+    ================================================================================== -->
+        <!-- =================================================================================
+         B2B SECTION
+    ================================================================================== -->
+    <section id="b2b" class="relative py-24 bg-gradient-to-r from-brand-turquesa to-brand-lima dark:bg-none dark:bg-[#0B0F19] border-t border-brand-lima/30 dark:border-white/5 overflow-hidden">
+        <!-- Fondo de Imagen Sutil con Parallax JS para iOS -->
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img id="b2b-parallax-img" src="{% static 'imagenes/hero.jpg' %}" alt="Background" class="w-full h-[140%] object-cover opacity-10 mix-blend-overlay pointer-events-none origin-top transition-transform duration-100 ease-out">
+        </div>
+        <!-- Marcas de agua -->
+        <img src="{% static 'imagenes/logo-white.png' %}" class="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 -rotate-12 h-56 md:h-[400px] opacity-15 pointer-events-none mix-blend-overlay" alt="Watermark">
+        <img src="{% static 'imagenes/logo-white.png' %}" class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 -rotate-12 h-56 md:h-[400px] opacity-15 pointer-events-none hidden md:block mix-blend-overlay" alt="Watermark">
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
+            <h2 class="text-4xl md:text-5xl font-['Avant_Garde',sans-serif] font-bold text-white mb-6 drop-shadow-sm">
+                ¿Eres un <span class="font-serif italic text-brand-lima drop-shadow-md">Negocio Local</span>?
+            </h2>
+            <p class="text-white/90 text-lg mb-8 max-w-2xl mx-auto font-medium drop-shadow-sm">
+                Únete al ecosistema orgánico de Palenque Go. Lleva tu negocio al mundo digital, optimiza tu ocupación y conéctate con miles de viajeros buscando experiencias auténticas.
+            </p>
+            <a href="/palenque-go/" class="inline-flex items-center gap-3 bg-white text-gray-900 font-bold px-8 py-4 rounded-full shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:bg-brand-turquesa hover:text-white hover:border-white">
+                Conoce cómo participar
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+<section id="descarga" class="relative py-24 bg-[#f0f2f5] dark:bg-[#020408] border-t border-white/5 overflow-hidden">
+        
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute inset-0" style="background-image: linear-gradient(0deg, transparent 24%, rgba(212, 175, 55, .3) 25%, rgba(212, 175, 55, .3) 26%, transparent 27%, transparent 74%, rgba(212, 175, 55, .3) 75%, rgba(212, 175, 55, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(212, 175, 55, .3) 25%, rgba(212, 175, 55, .3) 26%, transparent 27%, transparent 74%, rgba(212, 175, 55, .3) 75%, rgba(212, 175, 55, .3) 76%, transparent 77%, transparent); background-size: 50px 50px; transform: perspective(500px) rotateX(60deg) translateY(0); animation: gridMove 20s linear infinite;"></div>
+        </div>
+        <style>
+            @keyframes gridMove { from { transform: perspective(500px) rotateX(60deg) translateY(0); } to { transform: perspective(500px) rotateX(60deg) translateY(50px); } }
+            @keyframes busTravel { 0% { offset-distance: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+            .bus-on-route { offset-path: path('M10 150 Q 250 150 400 50 T 800 50'); animation: busTravel 4s linear infinite; }
+        </style>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="glass-panel rounded-[3rem] p-12 md:p-20 relative overflow-hidden flex flex-col md:flex-row items-center gap-16 shadow-xl shadow-black/5 border border-brand-lima group-hover-container">
+                
+                <div class="absolute -top-24 -right-24 w-[500px] h-[500px] bg-brand-turquesa/30 dark:bg-brand-accent/10 rounded-full blur-[120px] animate-pulse"></div>
+
+                <div class="md:w-1/2 z-10 text-center md:text-left relative">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-brand-turquesa/10 to-brand-lima/10 border border-brand-turquesa/20 mb-6 backdrop-blur-sm">
+                        <span class="w-2 h-2 rounded-full bg-brand-turquesa animate-pulse shadow-[0_0_5px_rgba(16,82,56,0.3)]"></span>
+                        <span class="text-brand-turquesa dark:text-brand-accent text-[10px] font-bold tracking-widest uppercase">Tecnología Cloud Nativa</span>
+                    </div>
+
+                    <h2 class="text-4xl md:text-6xl font-['Avant_Garde',sans-serif] font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                        Tu asiento está <br>
+                        <span class="italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-brand-turquesa via-brand-accent to-brand-lima">reservado.</span>
+                    </h2>
+                    
+                    <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 leading-relaxed">
+                        Olvídate de las descargas pesadas y las tiendas de aplicaciones. Nuestra plataforma vive en tu dispositivo al instante. 
+                        <b>Añade el acceso directo a tu pantalla de inicio</b> y viaja ligero.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        
+                        <a href="https://palenquegov6.netlify.app/" class="bg-brand-turquesa dark:bg-white text-white dark:text-black px-6 py-4 rounded-xl flex items-center gap-4 hover:scale-105 transition-transform duration-300 shadow-xl group cursor-pointer">
+                            <div class="w-10 h-10 rounded-full bg-black text-white dark:text-white flex items-center justify-center text-lg group-hover:rotate-45 transition-transform duration-500 shadow-md">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-[10px] font-bold uppercase tracking-wider text-white/80 dark:text-gray-500">Sin descargas</span>
+                                <span class="block font-bold text-lg leading-none">Iniciar Ahora</span>
+                            </div>
+                        </a>
+
+                        <button class="bg-gradient-to-r from-brand-turquesa to-brand-lima border-none text-white px-6 py-4 rounded-xl flex items-center gap-4 hover:scale-105 hover:shadow-xl transition-all duration-300 group cursor-pointer shadow-lg">
+                            <div class="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center text-xl text-white group-hover:bg-white group-hover:text-brand-turquesa transition-colors shadow-inner">
+                                <i class="fas fa-mobile-screen-button"></i>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-[10px] font-bold uppercase tracking-wider text-white/90">Web App</span>
+                                <span class="block font-bold text-lg leading-none">Instalar Acceso</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-6 flex items-center justify-center md:justify-start gap-4 opacity-50 text-[10px] uppercase tracking-widest text-gray-500">
+                        <span class="flex items-center gap-1"><i class="fab fa-apple"></i> iOS Compatible</span>
+                        <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
+                        <span class="flex items-center gap-1"><i class="fab fa-android"></i> Android Compatible</span>
+                    </div>
+
+                </div>
+
+                <div class="md:w-1/2 z-10 relative w-full h-[500px] flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
+                    
+                    <div class="absolute inset-0 z-0 opacity-100 pointer-events-none scale-125 md:scale-110">
+                        <svg width="100%" height="100%" viewBox="0 0 800 300" fill="none" xmlns="http://www.w3.org/2000/svg" class="overflow-visible">
+                            <path d="M-50 200 Q 250 200 400 100 T 850 100" stroke="#D4AF37" stroke-width="3" stroke-dasharray="10 10" class="opacity-40 animate-pulse"/>
+                            <g class="bus-on-route">
+                                <circle cx="10" cy="0" r="25" fill="url(#headlight-gradient)" class="animate-pulse"/>
+                                <circle cx="0" cy="0" r="15" fill="#D4AF37" fill-opacity="0.5" class="animate-ping"/>
+                                <circle cx="0" cy="0" r="8" fill="#D4AF37"/>
+                                <text x="-7" y="5" font-family="FontAwesome" font-size="14" fill="black" font-weight="bold">&#xf207;</text>
+                            </g>
+                            <defs>
+                                <radialGradient id="headlight-gradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(10 0) rotate(90) scale(25)">
+                                    <stop stop-color="white" stop-opacity="0.8"/>
+                                    <stop offset="1" stop-color="white" stop-opacity="0"/>
+                                </radialGradient>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <div style="position: relative; z-index: -55;" class="relative z-10 transform rotate-[-5deg] group-hover:rotate-0 transition-transform duration-700 ease-out drop-shadow-2xl">
+                        <div class="relative rounded-[2.5rem] border-[8px] border-gray-800 bg-gray-900 overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] w-[280px] md:w-[300px] h-[580px]">
+                            <div class="absolute top-0 inset-x-0 h-6 bg-black z-20 w-32 mx-auto rounded-b-xl"></div>
+                            
+                            <img src="https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?q=80&w=800&auto=format&fit=crop" 
+                                 class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-500" 
+                                 alt="App Interface Map">
+                            
+                            <div class="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none z-10"></div>
+                            
+                            <div class="absolute bottom-10 left-4 right-4 bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20 z-20">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-brand-turquesa dark:bg-brand-accent flex items-center justify-center text-white text-xs">
+                                        <i class="fas fa-bus"></i>
+                                    </div>
+                                    <div>
+                                        <div class="h-2 w-24 bg-white/20 rounded-full mb-1"></div>
+                                        <div class="h-2 w-16 bg-white/10 rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-20 -left-6 md:left-0 bg-gray-50 dark:bg-[#0B0F19] border border-brand-turquesa dark:border-brand-accent/30 p-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(212,175,55,0.3)] animate-bounce z-30" style="animation-duration: 3s;">
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <div class="w-12 h-12 rounded-full bg-green-900/30 flex items-center justify-center text-green-400 border border-green-500/30">
+                                    <i class="fas fa-location-arrow"></i>
+                                </div>
+                                <span class="absolute top-0 right-0 flex h-3 w-3">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-brand-turquesa dark:text-brand-accent uppercase tracking-wider mb-0.5 font-bold">Unidad Asignada</p>
+                                <p class="text-gray-900 dark:text-white font-bold text-sm">Llegando en 2 min</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- =================================================================================
+         7. FOOTER (Minimalist Premium)
+    ================================================================================== -->
+    <style>.dark #footer { background: #0B0F19 !important; background-image: none !important; }</style>
+    <footer id="footer" class="relative overflow-hidden bg-gradient-to-br from-brand-turquesa to-brand-lima pt-16 pb-8 border-t border-brand-lima/30 dark:border-white/5">
+        <!-- Fondo de Imagen Sutil con Parallax JS -->
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img id="footer-parallax-img" src="{% static 'imagenes/bg-footer.jpg' %}" alt="Background Footer" class="w-full h-[140%] object-cover opacity-10 mix-blend-overlay pointer-events-none origin-top transition-transform duration-100 ease-out">
+        </div>
+        <!-- Marcas de agua -->
+        <img src="{% static 'imagenes/logo-white.png' %}" class="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 -rotate-12 h-56 md:h-[400px] opacity-15 pointer-events-none mix-blend-overlay" alt="Watermark">
+        <img src="{% static 'imagenes/logo-white.png' %}" class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 -rotate-12 h-56 md:h-[400px] opacity-15 pointer-events-none hidden md:block mix-blend-overlay" alt="Watermark">
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="mb-6">
+                        <img src="{% static 'imagenes/logo-footer.png' %}" alt="Palenque Go" class="h-24 object-contain drop-shadow-lg">
+                    </div>
+                    <p class="text-white/80 font-light max-w-sm mb-8 text-sm leading-relaxed">
+                        Transformando la economía de la costa salvadoreña. Unimos la calidez ancestral con la eficiencia tecnológica.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/30 transition-colors text-white">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/30 transition-colors text-white">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/30 transition-colors text-white">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Empresa</h4>
+                    <ul class="space-y-4 text-white/80 text-sm font-medium">
+                        <li><a href="#" class="hover:text-white transition">Sobre Nosotros</a></li>
+                        <li><a href="#" class="hover:text-white transition">Carreras</a></li>
+                        <li><a href="#" class="hover:text-white transition">Prensa</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Legal</h4>
+                    <ul class="space-y-4 text-white/80 text-sm font-medium">
+                        <li><a href="#" class="hover:text-white transition">Privacidad</a></li>
+                        <li><a href="#" class="hover:text-white transition">Términos</a></li>
+                        <li><a href="#" class="hover:text-white transition">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/30 pt-8 flex flex-col md:flex-row justify-between items-center text-white/80 text-xs font-medium">
+                <p>&copy; 2024 Wave & Brew Transport Inc. Todos los derechos reservados.</p>
+                <div class="flex gap-6 mt-4 md:mt-0 text-lg">
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <div id="modal-video" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" onclick="closeModal('modal-video')"></div>
+    
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl p-4">
+        <div class="relative bg-black border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <button onclick="closeModal('modal-video')" class="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-brand-turquesa dark:bg-brand-accent text-gray-900 dark:text-white hover:text-black rounded-full flex items-center justify-center transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="aspect-video bg-gray-900 flex items-center justify-center group cursor-pointer">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-brand-turquesa dark:bg-brand-accent rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                        <i class="fas fa-play text-black text-3xl ml-1"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm tracking-widest uppercase">Cargando Demo...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-rutas" class="fixed inset-0 z-[100] hidden transition-opacity duration-300 opacity-0">
+    <div class="absolute inset-0 bg-[#f0f2f5] dark:bg-[#020408]/95 backdrop-blur-sm" onclick="closeModal('modal-rutas')"></div>
+    
+    <div class="absolute inset-4 md:inset-10 bg-gray-50 dark:bg-[#0B0F19] border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row animate-[scaleIn_0.3s_ease-out]">
+        
+        <div class="w-full md:w-80 bg-[#050810] border-r border-white/5 flex flex-col z-20">
+            <div class="p-6 border-b border-white/5 hidden md:block">
+                <h3 class="text-gray-900 dark:text-white font-bold text-lg tracking-wide">Panel de Control</h3>
+                <p class="text-gray-500 text-xs mt-1"><span class="w-2 h-2 bg-green-500 rounded-full inline-block mr-1 animate-pulse"></span> Sistema en línea</p>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div onclick="switchRoute('r1')" id="tab-r1" class="route-tab cursor-pointer p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all active-tab border-brand-turquesa dark:border-brand-accent/50 bg-brand-turquesa dark:bg-brand-accent/10">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-brand-turquesa dark:text-brand-accent font-bold text-xs">R-101</span>
+                        <span class="text-green-400 text-[10px] uppercase font-bold tracking-wider">En Ruta</span>
+                    </div>
+                    <h4 class="text-gray-900 dark:text-white font-bold text-sm">Expreso Costero</h4>
+                    <p class="text-gray-500 text-xs mt-1 truncate">Terminal A ➝ Playa Blanca</p>
+                </div>
+                <div onclick="switchRoute('r2')" id="tab-r2" class="route-tab cursor-pointer p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-blue-400 font-bold text-xs">R-205</span>
+                        <span class="text-blue-400 text-[10px] uppercase font-bold tracking-wider">Abordando</span>
+                    </div>
+                    <h4 class="text-gray-900 dark:text-white font-bold text-sm">Ruta Cafetalera</h4>
+                    <p class="text-gray-500 text-xs mt-1 truncate">Centro ➝ Zona Alta</p>
+                </div>
+                <div onclick="switchRoute('r3')" id="tab-r3" class="route-tab cursor-pointer p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-purple-400 font-bold text-xs">R-300</span>
+                        <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider">Programado</span>
+                    </div>
+                    <h4 class="text-gray-900 dark:text-white font-bold text-sm">Nocturno VIP</h4>
+                    <p class="text-gray-500 text-xs mt-1 truncate">Aeropuerto ➝ Hoteles</p>
+                </div>
+            </div>
+            
+            <div class="p-4 hidden md:block">
+                <button onclick="closeModal('modal-rutas')" class="w-full py-3 rounded-lg border border-white/10 text-gray-600 dark:text-gray-400 hover:bg-white/5 hover:text-gray-900 dark:text-white transition text-xs uppercase tracking-widest">
+                    Cerrar Panel
+                </button>
+            </div>
+        </div>
+
+        <div class="flex-1 relative bg-cover bg-center overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?q=80&w=2070&auto=format&fit=crop');">
+            
+            <div class="absolute inset-0 bg-gray-50 dark:bg-[#0B0F19]/80 backdrop-blur-sm z-0"></div>
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 z-0"></div>
+
+            <div class="absolute inset-0 z-0 flex items-center justify-center opacity-60 pointer-events-none">
+                 <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 400">
+                    <defs>
+                        <linearGradient id="roadFade" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#D4AF37" stop-opacity="0" />
+                            <stop offset="20%" stop-color="#D4AF37" stop-opacity="0.2" />
+                            <stop offset="50%" stop-color="#D4AF37" stop-opacity="1" />
+                            <stop offset="80%" stop-color="#D4AF37" stop-opacity="0.2" />
+                            <stop offset="100%" stop-color="#D4AF37" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M-100 350 C 200 350, 300 200, 500 200 S 800 50, 1100 50" 
+                          fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="40" />
+                    <path id="dynamic-road" 
+                          d="M-100 350 C 200 350, 300 200, 500 200 S 800 50, 1100 50" 
+                          fill="none" stroke="url(#roadFade)" stroke-width="4" 
+                          stroke-dasharray="20 30"
+                          class="animate-[dash_1s_linear_infinite]" />
+                </svg>
+            </div>
+
+            <div class="relative z-10 h-full p-6 md:p-10 flex flex-col justify-between">
+                
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-1" id="route-title">Expreso Costero</h2>
+                        <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                            <span id="route-id" class="px-2 py-0.5 rounded bg-brand-turquesa dark:bg-brand-accent text-black font-bold text-xs">R-101</span>
+                            <span id="route-driver"><i class="fas fa-id-card mr-1"></i> Chofer: Carlos M.</span>
+                        </div>
+                    </div>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-gray-500 text-xs uppercase tracking-widest">Velocidad Actual</p>
+                        <p class="text-4xl font-mono text-brand-turquesa dark:text-brand-accent font-bold" id="route-speed">45 <span class="text-sm text-gray-500">km/h</span></p>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex items-center justify-center my-8 relative">
+                    <div class="absolute w-64 h-64 border border-white/5 rounded-full animate-pulse"></div>
+                    <div class="absolute w-48 h-48 border border-white/10 rounded-full"></div>
+                    
+                    <div class="absolute w-28 h-28 border border-brand-turquesa dark:border-brand-accent/20 rounded-full flex items-center justify-center bg-gray-50 dark:bg-[#0B0F19] shadow-[0_0_50px_rgba(212,175,55,0.4)] z-20">
+                        <i class="fas fa-bus text-4xl text-brand-turquesa dark:text-brand-accent animate-bounce"></i>
+                        <div class="absolute inset-0 border-2 border-brand-turquesa dark:border-brand-accent/30 rounded-full border-dashed animate-[spin_10s_linear_infinite]"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-black/40 border border-white/10 p-4 rounded-xl backdrop-blur-md">
+                        <p class="text-gray-500 text-[10px] uppercase tracking-wider mb-1">Próxima Parada</p>
+                        <p class="text-gray-900 dark:text-white font-bold truncate" id="route-next">Playa Blanca</p>
+                        <p class="text-green-400 text-xs">ETA: 5 min</p>
+                    </div>
+                    <div class="bg-black/40 border border-white/10 p-4 rounded-xl backdrop-blur-md">
+                        <p class="text-gray-500 text-[10px] uppercase tracking-wider mb-1">Ocupación</p>
+                        <div class="flex items-end gap-2">
+                            <p class="text-gray-900 dark:text-white font-bold" id="route-occ">85%</p>
+                            <div class="w-full h-1.5 bg-gray-700 rounded-full mb-1.5">
+                                <div class="h-full bg-brand-turquesa dark:bg-brand-accent rounded-full transition-all duration-1000" style="width: 85%" id="route-occ-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-black/40 border border-white/10 p-4 rounded-xl backdrop-blur-md flex flex-col justify-center items-center cursor-pointer hover:bg-brand-turquesa dark:bg-brand-accent hover:text-black hover:border-brand-turquesa dark:border-brand-accent transition group shadow-lg">
+                        <i class="fas fa-ticket-alt text-brand-turquesa dark:text-brand-accent group-hover:text-black text-xl mb-1 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[10px] text-gray-900 dark:text-white group-hover:text-black font-bold uppercase tracking-widest">Reservar Asiento</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes dash {
+        to {
+            stroke-dashoffset: -50;
+        }
+    }
+</style>
+
+<style>
+    @keyframes scaleIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+</style>
+
+<script>
+    // --- LÓGICA DE MODALES ---
+    
+    function openVideoModal() {
+        const modal = document.getElementById('modal-video');
+        modal.classList.remove('hidden');
+    }
+
+    function openRoutesModal() {
+        const modal = document.getElementById('modal-rutas');
+        modal.classList.remove('hidden');
+        // Pequeño delay para la transición de opacidad
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+        }, 10);
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if(modalId === 'modal-rutas') {
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+
+    // --- LÓGICA DE DATOS DEL MODAL DE RUTAS ---
+    
+    const routesDB = {
+        'r1': {
+            id: 'R-101', title: 'Expreso Costero', driver: 'Carlos M.', speed: '45', next: 'Playa Blanca', eta: '5 min', occ: '85%', color: 'text-brand-turquesa dark:text-brand-accent', barColor: '#D4AF37'
+        },
+        'r2': {
+            id: 'R-205', title: 'Ruta Cafetalera', driver: 'Ana S.', speed: '12', next: 'Mirador Alto', eta: '12 min', occ: '40%', color: 'text-blue-400', barColor: '#60A5FA'
+        },
+        'r3': {
+            id: 'R-300', title: 'Nocturno VIP', driver: 'Jorge L.', speed: '0', next: 'Aeropuerto', eta: 'Pendiente', occ: '0%', color: 'text-purple-400', barColor: '#A78BFA'
+        }
+    };
+
+    function switchRoute(id) {
+        const data = routesDB[id];
+        
+        // 1. Actualizar Tabs (Estilos)
+        document.querySelectorAll('.route-tab').forEach(tab => {
+            tab.className = "route-tab cursor-pointer p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all";
+        });
+        const activeTab = document.getElementById('tab-' + id);
+        // Si es R1 (Gold), R2 (Blue), R3 (Purple)
+        let activeClass = "border-brand-turquesa dark:border-brand-accent/50 bg-brand-turquesa dark:bg-brand-accent/10"; // Default
+        if(id === 'r2') activeClass = "border-blue-500/50 bg-blue-500/10";
+        if(id === 'r3') activeClass = "border-purple-500/50 bg-purple-500/10";
+        
+        activeTab.className = `route-tab cursor-pointer p-4 rounded-xl transition-all active-tab ${activeClass}`;
+
+        // 2. Actualizar Datos en Pantalla
+        document.getElementById('route-title').innerText = data.title;
+        document.getElementById('route-id').innerText = data.id;
+        document.getElementById('route-id').className = `px-2 py-0.5 rounded text-black font-bold text-xs ${id === 'r2' ? 'bg-blue-400' : (id === 'r3' ? 'bg-purple-400' : 'bg-brand-turquesa dark:bg-brand-accent')}`;
+        
+        document.getElementById('route-driver').innerHTML = `<i class="fas fa-id-card mr-1"></i> Chofer: ${data.driver}`;
+        
+        // Animación de números rápida
+        document.getElementById('route-speed').innerHTML = `${data.speed} <span class="text-sm text-gray-500">km/h</span>`;
+        document.getElementById('route-speed').className = `text-4xl font-mono font-bold ${data.color}`;
+        
+        document.getElementById('route-next').innerText = data.next;
+        document.getElementById('route-occ').innerText = data.occ;
+        document.getElementById('route-occ-bar').style.width = data.occ;
+        document.getElementById('route-occ-bar').style.backgroundColor = data.barColor;
+    }
+</script>
+
+    <!-- Scripts de Inicialización -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Inicializar AOS (Animaciones)
+        AOS.init({
+            once: true,
+            offset: 100,
+            duration: 800,
+            easing: 'ease-out-cubic',
+        });
+
+        // Lógica Navbar Sticky Glass y Parallax
+        const navbar = document.getElementById('navbar');
+        const b2bSection = document.getElementById('b2b');
+        const b2bParallaxImg = document.getElementById('b2b-parallax-img');
+        const footerSection = document.getElementById('footer');
+        const footerParallaxImg = document.getElementById('footer-parallax-img');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white/90', 'dark:bg-[#0B0F19]/90', 'backdrop-blur-lg', 'shadow-lg');
+            } else {
+                navbar.classList.remove('bg-white/90', 'dark:bg-[#0B0F19]/90', 'backdrop-blur-lg', 'shadow-lg');
+            }
+
+            // Parallax JS (Compatible con iOS)
+            const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+
+            // Parallax B2B
+            if (b2bSection && b2bParallaxImg) {
+                const rect = b2bSection.getBoundingClientRect();
+                if(rect.top <= viewHeight && rect.bottom >= 0) {
+                    const scrollPercent = (viewHeight - rect.top) / (viewHeight + rect.height);
+                    const translateY = -(scrollPercent * 15);
+                    b2bParallaxImg.style.transform = `translateY(${translateY}%)`;
+                }
+            }
+
+            // Parallax Footer
+            if (footerSection && footerParallaxImg) {
+                const rect = footerSection.getBoundingClientRect();
+                if(rect.top <= viewHeight && rect.bottom >= 0) {
+                    const scrollPercent = (viewHeight - rect.top) / (viewHeight + rect.height);
+                    const translateY = -(scrollPercent * 15);
+                    footerParallaxImg.style.transform = `translateY(${translateY}%)`;
+                }
+            }
+        });
+
+
+        // --- LÓGICA DEL MENÚ MÓVIL (SIDEBAR) ---
+    function toggleMobileMenu() {
+        const overlay = document.getElementById('mobile-menu-overlay');
+        const backdrop = document.getElementById('mobile-backdrop');
+        const sidebar = document.getElementById('mobile-sidebar');
+        
+        // Comprobar si está abierto o cerrado
+        if (overlay.classList.contains('hidden')) {
+            // ABRIR
+            overlay.classList.remove('hidden');
+            // Pequeño timeout para permitir que el navegador renderice antes de animar
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                sidebar.classList.remove('translate-x-full');
+            }, 10);
+        } else {
+            // CERRAR
+            backdrop.classList.add('opacity-0');
+            sidebar.classList.add('translate-x-full');
+            
+            // Esperar a que termine la transición (300ms) para ocultar el div
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 300);
+        }
+    }
+    </script>
+</body>
+</html>

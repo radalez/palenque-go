@@ -1,0 +1,1321 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palenque Go Sivar | Ecosistema Orgánico Premium</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'impact': ['Anton', 'sans-serif'],
+                        'sans': ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            turquesa: '#105238',
+                            lima: '#8ee01a',
+                            accent: '#c4d551',
+                            dark: '#111111',
+                            card: '#1a1a1a'
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Siempre carga en modo claro por defecto
+        document.documentElement.classList.remove('dark');
+        if (localStorage.theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          localStorage.theme = 'light';
+        }
+        
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+    </script>
+
+    <style>
+        body, html {
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Utilidad para el escalonado del texto principal */
+        .text-shadow-heavy {
+            text-shadow: 0px 10px 30px rgba(0,0,0,0.8);
+        }
+
+        /* --- ESTILOS DEL MOTOR 3D --- */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            outline: none;
+            z-index: 0;
+            pointer-events: none; /* Evita que bloquee el scroll de la landing */
+        }
+
+        .interactive { pointer-events: auto; }
+
+        /* Estilo de Vidrio Esmerilado (Glassmorphism) para UI 3D */
+        .glass-card {
+            background: rgba(10, 15, 25, 0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Panel Lateral 3D */
+        #info-panel {
+            transform: translateX(100%);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+        }
+        #info-panel.active { transform: translateX(0); }
+
+        /* Botón de Salida 3D */
+        #btn-exit-3d {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        #btn-exit-3d.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Botón de Empezar Recorrido 3D */
+        #btn-start-tour {
+            position: fixed;
+            bottom: 4.5rem;
+            right: 4.5rem;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        #btn-start-tour.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Efecto de Flash de Transición */
+        #transition-overlay {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 150;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        /* Contenedor principal de la Landing 2D */
+        #main-scroll-content {
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans bg-gray-50 text-gray-900 dark:bg-[#05070a] dark:text-gray-900 dark:text-white transition-colors duration-300">
+
+    <div id="transition-overlay"></div>
+    <canvas id="canvas-container"></canvas>
+
+    <div id="btn-exit-3d" class="interactive">
+        <button onclick="exitExperience()" class="group flex items-center gap-4 bg-gray-100 dark:bg-black/50 backdrop-blur-md border border-gray-900 dark:border-gray-300 dark:border-white/20 text-gray-900 dark:text-white px-6 py-4 rounded-2xl hover:bg-red-600 transition-all shadow-2xl">
+            <i class="fas fa-sign-out-alt text-xl group-hover:-translate-x-1 transition-transform"></i>
+            <div class="text-left">
+                <p class="text-[10px] font-black tracking-widest uppercase opacity-60">Volver a Landing</p>
+                <p class="font-bold">SALIR DEL 3D</p>
+            </div>
+        </button>
+    </div>
+
+    <div id="btn-start-tour" class="interactive">
+        <button onclick="startTour()" class="group flex items-center gap-4 bg-gray-100 dark:bg-black/50 backdrop-blur-md border border-gray-900 dark:border-gray-300 dark:border-white/20 text-gray-900 dark:text-white px-6 py-4 rounded-2xl hover:bg-brand-turquesa dark:hover:bg-brand-lima hover:text-white dark:hover:text-black transition-all shadow-2xl">
+            <div class="text-right">
+                <p class="text-[10px] font-black tracking-widest uppercase opacity-60">Explorar Cabañas</p>
+                <p class="font-bold">EMPEZAR RECORRIDO</p>
+            </div>
+            <i class="fas fa-play text-xl group-hover:translate-x-1 transition-transform"></i>
+        </button>
+    </div>
+
+    <aside id="info-panel" class="fixed right-6 top-6 bottom-6 w-full max-w-xl glass-card rounded-[3rem] p-12 flex flex-col interactive">
+        <button onclick="closeInfo()" class="absolute top-10 right-10 text-gray-500 hover:text-gray-900 dark:text-white transition group">
+            <i class="fas fa-times text-2xl group-hover:rotate-90 transition-transform"></i>
+        </button>
+
+        <div id="content-area" class="mt-10">
+            <div class="flex items-center gap-4 mb-4">
+                <i id="domo-icon" class="fas fa-store text-yellow-500 text-3xl"></i>
+                <span id="domo-tag" class="text-emerald-400 text-xs font-bold tracking-[0.3em] uppercase">Módulo de Crecimiento</span>
+            </div>
+            <h2 id="domo-title" class="text-6xl font-impact text-white mt-2 mb-8 tracking-wide">Cargando...</h2>
+            <div id="domo-body" class="text-gray-200 leading-relaxed space-y-6 text-xl font-light">
+            </div>
+        </div>
+
+        <div class="mt-auto pt-10 space-y-4">
+            <button onclick="openCabanaVideo()" class="w-full bg-brand-turquesa dark:bg-brand-lima hover:bg-brand-turquesa/90 dark:hover:bg-brand-lima/90 text-white font-black py-6 rounded-3xl transition-all text-xl shadow-[0_0_20px_rgba(49,151,149,0.4)]">
+                <i class="fas fa-play-circle mr-2"></i> Ver Video de Módulo
+            </button>
+            <div class="flex gap-4">
+                <button onclick="prevCabin()" class="flex-1 bg-black/5 dark:bg-white/5 border border-gray-900 dark:border-gray-200 dark:border-white/10 text-white py-5 rounded-2xl hover:bg-black/10 dark:bg-white/10 transition-all flex items-center justify-center gap-3">
+                    <i class="fas fa-chevron-left text-xs"></i> Anterior
+                </button>
+                <button onclick="nextCabin()" class="flex-1 bg-black/5 dark:bg-white/5 border border-gray-900 dark:border-gray-200 dark:border-white/10 text-white py-5 rounded-2xl hover:bg-black/10 dark:bg-white/10 transition-all flex items-center justify-center gap-3">
+                    Siguiente <i class="fas fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div id="modal-video" class="fixed inset-0 z-[200] hidden flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl" onclick="closeYoutubeModal()"></div>
+        <div class="relative w-full max-w-5xl p-6 interactive">
+            <button onclick="closeYoutubeModal()" class="absolute -top-12 right-0 text-white/50 hover:text-white flex items-center gap-2 font-bold tracking-widest">
+                CERRAR <i class="fas fa-times"></i>
+            </button>
+            <div class="aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/9bZkp7q19f0?autoplay=0" title="Palenque Go Presentation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-video-implement" class="fixed inset-0 z-[200] hidden flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl" onclick="closeCabanaVideoModal(true)"></div>
+        <div class="relative w-full max-w-5xl p-6 interactive">
+            <button onclick="closeCabanaVideoModal(true)" class="absolute -top-12 right-0 text-white/50 hover:text-white flex items-center gap-2 font-bold tracking-widest">
+                CERRAR <i class="fas fa-times"></i>
+            </button>
+            <div class="aspect-video bg-gray-900 dark:bg-brand-dark rounded-[3rem] overflow-hidden border border-white/10 dark:border-white/10 flex flex-col items-center justify-center shadow-2xl relative">
+                <div id="cabana-video-player" class="w-full h-full"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="main-scroll-content">
+
+        <header class="absolute top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-gradient-to-b from-white/90 to-transparent dark:from-black/80 dark:to-transparent transition-colors duration-300">
+            <div class="flex items-center gap-2">
+                <a href="/">
+                    <img src="{% static 'imagenes/logo-dark.png' %}" alt="Palenque Go Sivar" class="h-12 md:h-14 dark:hidden transition-all duration-300">
+                    <img src="{% static 'imagenes/logo-light.png' %}" alt="Palenque Go Sivar" class="h-12 md:h-14 hidden dark:block transition-all duration-300">
+                </a>
+            </div>
+
+            <nav class="hidden lg:flex gap-6 text-[11px] font-bold tracking-[0.15em] text-gray-900 dark:text-white uppercase transition-colors">
+                <a href="#" class="hover:text-brand-turquesa dark:hover:text-brand-lima transition">Inicio</a>
+                <a href="#" class="hover:text-brand-turquesa dark:hover:text-brand-lima transition">Módulos</a>
+                <a href="#" class="hover:text-brand-turquesa dark:hover:text-brand-lima transition">Ecosistema</a>
+                <a href="#" class="hover:text-brand-turquesa dark:hover:text-brand-lima transition">Afiliados</a>
+                <a href="#" class="hover:text-brand-turquesa dark:hover:text-brand-lima transition">Demo Video</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleTheme()" class="text-gray-900 dark:text-white text-xl hover:text-brand-turquesa dark:hover:text-brand-lima transition">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:inline"></i>
+                </button>
+                <a href="#" class="bg-brand-turquesa dark:bg-brand-lima text-white dark:text-brand-dark px-8 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase hover:opacity-80 transition shadow-lg shadow-brand-turquesa/50 dark:shadow-brand-lima/50">
+                    Acceder
+                </a>
+            </div>
+        </header>
+
+        <section class="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden">
+            <div id="hero-background-container" class="absolute inset-0 z-0 pointer-events-none">
+                <img src="{% static 'imagenes/ecopalenque.jpg' %}" alt="Ecopalenque" class="w-full h-full object-cover object-center">
+                <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#111111]"></div>
+            </div>
+
+            <div class="container mx-auto px-6 relative z-10 flex flex-col items-center pointer-events-none">
+                <div class="w-full max-w-5xl pointer-events-auto">
+                    <div class="flex flex-col items-start leading-[0.85]">
+                        <h2 class="font-impact text-[4rem] md:text-[5rem] lg:text-[6rem] text-white uppercase tracking-tight text-shadow-heavy">DIGITALIZANDO</h2>
+                        <h2 class="text-[3rem] md:text-[4rem] lg:text-[4.5rem] -mt-2 md:-mt-4 italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-brand-turquesa to-brand-lima pb-4 pr-4 drop-shadow-lg">La Costa</h2>
+                    </div>
+
+                    <div class="w-full flex flex-col md:flex-row items-end justify-between my-8 pl-4 md:pl-24">
+                        <p class="text-lg md:text-xl font-light max-w-md text-white mb-6 md:mb-0 border-l-2 border-brand-lima pl-6 bg-black/30 backdrop-blur-sm p-4 rounded-r-xl">
+                            Puedes jugar un rol principal en llevar tu negocio al mundo digital a través del ecosistema <strong>Palenque Go</strong>.
+                        </p>
+                        <button id="btn-explorar" onclick="startExperience()" class="bg-white text-black px-10 py-5 rounded-full text-sm font-black tracking-widest uppercase hover:bg-brand-turquesa hover:text-white transition-all duration-300 shadow-[0_0_30px_rgba(16,82,56,0.5)] whitespace-nowrap transform hover:scale-105">
+                            Explorar 3D Ahora <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col items-end leading-[0.85]">
+                        <h2 class="font-impact text-[4rem] md:text-[5rem] lg:text-[6rem] text-white uppercase tracking-tight text-shadow-heavy">CON EL ECOSISTEMA</h2>
+                        <h2 class="text-[3rem] md:text-[4rem] lg:text-[4.5rem] -mt-2 md:-mt-4 italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-brand-turquesa to-brand-lima pb-4 pr-4 drop-shadow-lg">Orgánico</h2>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 relative z-10 bg-cover bg-center" style="background-image: url('{% static "imagenes/bosques-de-bambu.jpg" %}');">
+            <div class="absolute inset-0 bg-gradient-to-br from-brand-turquesa/80 to-brand-lima/80 backdrop-blur-[2px]"></div>
+            <div class="container mx-auto px-6 text-center relative z-20">
+                <h2 class="font-impact text-5xl md:text-7xl uppercase tracking-wide mb-4 text-white">
+                    TU ECOSISTEMA GENERA IMPACTO
+                </h2>
+                <p class="text-xl text-white/90 font-light max-w-2xl mx-auto mb-16">
+                    Sincroniza tus reservas y deja que la tecnología se encargue de optimizar tu ocupación sin perder la esencia local.
+                </p>
+
+                <div class="relative max-w-5xl mx-auto group cursor-pointer" onclick="openYoutubeModal()">
+                    <div class="rounded-xl border-[12px] md:border-[16px] border-white overflow-hidden aspect-video relative shadow-2xl bg-black">
+                        <img src="{% static 'imagenes/bosques-de-bambu.jpg' %}" alt="Video Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                        <div class="absolute inset-0 bg-black/30"></div>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                            <div class="w-24 h-24 md:w-32 md:h-32 rounded-full border-[3px] md:border-[5px] border-white flex items-center justify-center bg-white/10 backdrop-blur-sm group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-play text-white text-3xl md:text-5xl ml-2 opacity-100"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-[#f0f2f5] dark:bg-[#111111] py-20 relative z-10">
+            <div class="container mx-auto px-6 max-w-6xl">
+                <div class="grid md:grid-cols-2 gap-16">
+                    <div>
+                        <h2 class="font-impact text-6xl md:text-[5.5rem] uppercase tracking-wide text-brand-turquesa dark:text-brand-lima mb-8 leading-[0.9]">
+                            ÚNETE AL<br>ECOSISTEMA
+                        </h2>
+
+                        <p class="text-gray-700 dark:text-gray-200 font-sans text-sm md:text-base leading-relaxed mb-6">
+                            Palenque Go no es solo una plataforma, es un <strong>modelo socioeconómico alternativo</strong> diseñado bajo la regla del beneficio mutuo. Ya seas un negocio local, un emprendedor o un inversor visionario, nuestro ecosistema está creado para que el <strong>éxito de uno haga crecer a toda la red.</strong>
+                        </p>
+
+                        <p class="text-gray-700 dark:text-gray-200 font-sans text-sm md:text-base leading-relaxed">
+                            Descubre cómo puedes integrarte a esta <strong>economía circular</strong>, retener la riqueza en tu territorio y capitalizarte sin recurrir a deudas. Si tienes la visión pero necesitas el chasis tecnológico, <a href="#" class="text-brand-turquesa dark:text-brand-lima underline font-bold hover:opacity-70 transition">haz clic aquí para recibir asesoría personalizada.</a>
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col justify-start">
+
+                        <!-- 1. Sistema de Afiliados -->
+                        <div class="border-t border-b border-gray-200 dark:border-white/20">
+                            <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-black/5 dark:hover:bg-white/5 transition-colors px-2 text-left">
+                                <div class="flex items-center gap-6">
+                                    <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-lima flex items-center justify-center text-brand-turquesa dark:text-brand-lima">
+                                        <i class="fas fa-link text-lg"></i>
+                                    </div>
+                                    <span class="font-impact tracking-wider text-xl uppercase mt-1 text-gray-900 dark:text-white">AFILIADOS Y EMBAJADORES</span>
+                                </div>
+                                <i class="fas fa-plus text-gray-900 dark:text-white text-xl font-light transition-transform duration-300 transform flex-shrink-0"></i>
+                            </button>
+                            <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                                <p class="text-gray-700 dark:text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                    Únete como embajador local y monetiza tus recomendaciones. Crea enlaces y cupones personalizados para los viajeros. Cada vez que un referido use tu cupón, recibirás automáticamente una <strong>comisión directa del 7%</strong> reflejada en la wallet de tu aplicativo.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 2. Anfitrión en el Marketplace -->
+                        <div class="border-b border-gray-200 dark:border-white/20">
+                            <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-black/5 dark:hover:bg-white/5 transition-colors px-2 text-left">
+                                <div class="flex items-center gap-6">
+                                    <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-lima flex items-center justify-center text-brand-turquesa dark:text-brand-lima">
+                                        <i class="fas fa-store text-lg"></i>
+                                    </div>
+                                    <span class="font-impact tracking-wider text-xl uppercase mt-1 text-gray-900 dark:text-white">ANFITRIÓN EN EL MARKETPLACE</span>
+                                </div>
+                                <i class="fas fa-plus text-gray-900 dark:text-white text-xl font-light transition-transform duration-300 transform flex-shrink-0"></i>
+                            </button>
+                            <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                                <p class="text-gray-700 dark:text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                    Integra tu negocio — desde habitaciones de hotel y transporte hasta clases de surf o soporte técnico. Gestiona tus reservas con el sistema <strong>Match-Flow</strong> (el pago se libera al escanear el QR) y lanza <strong>"Ofertas Relámpago"</strong> para vender tus espacios vacíos de última hora.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 3. Inversión y Tokenización DAO -->
+                        <div class="border-b border-gray-200 dark:border-white/20">
+                            <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-black/5 dark:hover:bg-white/5 transition-colors px-2 text-left">
+                                <div class="flex items-center gap-6">
+                                    <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-lima flex items-center justify-center text-brand-turquesa dark:text-brand-lima">
+                                        <i class="fas fa-coins text-lg"></i>
+                                    </div>
+                                    <span class="font-impact tracking-wider text-xl uppercase mt-1 text-gray-900 dark:text-white">INVERSIÓN Y TOKENIZACIÓN (DAO)</span>
+                                </div>
+                                <i class="fas fa-plus text-gray-900 dark:text-white text-xl font-light transition-transform duration-300 transform flex-shrink-0"></i>
+                            </button>
+                            <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                                <p class="text-gray-700 dark:text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                    Participa en la gobernanza y sé dueño de la infraestructura. Nuestro ecosistema evoluciona hacia una <strong>DAO con tokenización dual</strong>: un Utility Token para operar y recibir recompensas en la App, y un Security Token para poseer <strong>fragmentos reales del Taller Modular de Bambú.</strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 4. La Hucha Palenque -->
+                        <div class="border-b border-gray-200 dark:border-white/20">
+                            <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-black/5 dark:hover:bg-white/5 transition-colors px-2 text-left">
+                                <div class="flex items-center gap-6">
+                                    <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-lima flex items-center justify-center text-brand-turquesa dark:text-brand-lima">
+                                        <i class="fas fa-seedling text-lg"></i>
+                                    </div>
+                                    <span class="font-impact tracking-wider text-xl uppercase mt-1 text-gray-900 dark:text-white">LA HUCHA PALENQUE</span>
+                                </div>
+                                <i class="fas fa-plus text-gray-900 dark:text-white text-xl font-light transition-transform duration-300 transform flex-shrink-0"></i>
+                            </button>
+                            <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                                <p class="text-gray-700 dark:text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                    Transforma tu actividad económica en vida biológica. A través del <strong>"Triple 1%"</strong>, cada transacción en la red — ya sea en satoshis o dólares — financia directamente la siembra de <strong>bosques de bambú</strong> para recuperar el agua y el aire de El Salvador.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 5. Lanzadera de Emprendedores -->
+                        <div class="border-b border-gray-200 dark:border-white/20">
+                            <button onclick="toggleFaq(this)" class="w-full py-5 flex items-center justify-between group hover:bg-black/5 dark:hover:bg-white/5 transition-colors px-2 text-left">
+                                <div class="flex items-center gap-6">
+                                    <div class="w-12 h-12 flex-shrink-0 rounded-full border border-brand-lima flex items-center justify-center text-brand-turquesa dark:text-brand-lima">
+                                        <i class="fas fa-rocket text-lg"></i>
+                                    </div>
+                                    <span class="font-impact tracking-wider text-xl uppercase mt-1 text-gray-900 dark:text-white">LANZADERA DE EMPRENDEDORES</span>
+                                </div>
+                                <i class="fas fa-plus text-gray-900 dark:text-white text-xl font-light transition-transform duration-300 transform flex-shrink-0"></i>
+                            </button>
+                            <div class="overflow-hidden max-h-0 opacity-0 transition-all duration-300 px-2 md:pl-20">
+                                <p class="text-gray-700 dark:text-gray-300 font-sans text-sm md:text-base pb-6 font-light">
+                                    Si tienes la visión pero careces de los medios, te ofrecemos el <strong>chasis tecnológico y el respaldo necesario</strong>. Ayudamos a que el talento local florezca y se convierta en un pilar de progreso real dentro de nuestra red de colaboración.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white dark:bg-[#111111] py-24 relative z-10 border-t border-gray-200 dark:border-white/5 overflow-hidden">
+
+            <!-- Fondo decorativo -->
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-turquesa/5 dark:bg-brand-lima/5 rounded-full blur-[120px] pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-lima/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-20">
+                    <span class="text-brand-turquesa dark:text-brand-lima font-bold tracking-[0.3em] uppercase text-xs mb-4 block">Los 3 Pilares del Ecosistema</span>
+                    <h2 class="font-impact text-5xl md:text-6xl uppercase tracking-wide mb-6 text-gray-900 dark:text-white">
+                        UNA SOLA MISIÓN
+                    </h2>
+                    <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto font-light leading-relaxed">
+                        Cada viaje activa un ciclo que beneficia a todos: al viajero, al aliado local y al territorio. No es teoría — es el motor que mueve cada reserva.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+                    <!-- PILAR 1: Win-to-Win -->
+                    <div class="relative group bg-gray-50 dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden hover:border-brand-lima dark:hover:border-brand-lima transition-all duration-500 hover:shadow-xl hover:shadow-brand-turquesa/10 dark:hover:shadow-brand-lima/10">
+                        <!-- Acento superior -->
+                        <div class="h-1 w-full bg-gradient-to-r from-brand-turquesa to-brand-lima"></div>
+                        <div class="p-10">
+                            <!-- Ícono -->
+                            <div class="w-14 h-14 rounded-2xl bg-brand-turquesa/10 dark:bg-brand-lima/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-handshake text-2xl text-brand-turquesa dark:text-brand-lima"></i>
+                            </div>
+                            <!-- Tag -->
+                            <span class="text-[10px] font-black tracking-[0.25em] uppercase text-brand-turquesa dark:text-brand-lima mb-3 block">Pilar 01</span>
+                            <h3 class="font-impact text-3xl tracking-wider mb-4 text-gray-900 dark:text-white">WIN-TO-WIN</h3>
+                            <p class="text-gray-600 dark:text-gray-400 font-light leading-relaxed text-sm mb-6">
+                                El hotel llena sus camas vacías. El guía local asegura sus clientes. El viajero arma su aventura a buen precio. Los tres ganan. Siempre.
+                            </p>
+                            <!-- Detalle visual -->
+                            <div class="flex items-center gap-3 pt-6 border-t border-gray-200 dark:border-white/10">
+                                <div class="flex -space-x-2">
+                                    <div class="w-7 h-7 rounded-full bg-brand-turquesa flex items-center justify-center text-white text-[9px] font-bold">Ali</div>
+                                    <div class="w-7 h-7 rounded-full bg-brand-lima flex items-center justify-center text-gray-900 text-[9px] font-bold">Guí</div>
+                                    <div class="w-7 h-7 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-white text-[9px] font-bold">Vj</div>
+                                </div>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Modelo Win-Win-Win</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PILAR 2: Turismo Regenerativo -->
+                    <div class="relative group bg-gray-50 dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden hover:border-brand-lima dark:hover:border-brand-lima transition-all duration-500 hover:shadow-xl hover:shadow-brand-turquesa/10 dark:hover:shadow-brand-lima/10 md:-mt-4 md:mb-4">
+                        <!-- Acento superior (más grande = pilar central) -->
+                        <div class="h-1.5 w-full bg-gradient-to-r from-brand-lima to-brand-turquesa"></div>
+                        <!-- Badge destacado -->
+                        <div class="absolute top-6 right-6 bg-brand-lima text-gray-900 text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full">Core</div>
+                        <div class="p-10">
+                            <div class="w-14 h-14 rounded-2xl bg-brand-turquesa/10 dark:bg-brand-lima/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-seedling text-2xl text-brand-turquesa dark:text-brand-lima"></i>
+                            </div>
+                            <span class="text-[10px] font-black tracking-[0.25em] uppercase text-brand-turquesa dark:text-brand-lima mb-3 block">Pilar 02</span>
+                            <h3 class="font-impact text-3xl tracking-wider mb-4 text-gray-900 dark:text-white">TURISMO<br>REGENERATIVO</h3>
+                            <p class="text-gray-600 dark:text-gray-400 font-light leading-relaxed text-sm mb-6">
+                                Cada viaje siembra un bosque. La "Hucha Palenque" destina el 1% de cada reserva a recuperar bambú, agua y aire en El Salvador.
+                            </p>
+                            <div class="flex items-center gap-2 pt-6 border-t border-gray-200 dark:border-white/10">
+                                <i class="fas fa-leaf text-brand-turquesa dark:text-brand-lima text-sm"></i>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Triple 1% — Regeneración como Activo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PILAR 3: Economía Circular -->
+                    <div class="relative group bg-gray-50 dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden hover:border-brand-lima dark:hover:border-brand-lima transition-all duration-500 hover:shadow-xl hover:shadow-brand-turquesa/10 dark:hover:shadow-brand-lima/10">
+                        <div class="h-1 w-full bg-gradient-to-r from-brand-lima to-brand-turquesa"></div>
+                        <div class="p-10">
+                            <div class="w-14 h-14 rounded-2xl bg-brand-turquesa/10 dark:bg-brand-lima/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-recycle text-2xl text-brand-turquesa dark:text-brand-lima"></i>
+                            </div>
+                            <span class="text-[10px] font-black tracking-[0.25em] uppercase text-brand-turquesa dark:text-brand-lima mb-3 block">Pilar 03</span>
+                            <h3 class="font-impact text-3xl tracking-wider mb-4 text-gray-900 dark:text-white">ECONOMÍA<br>CIRCULAR</h3>
+                            <p class="text-gray-600 dark:text-gray-400 font-light leading-relaxed text-sm mb-6">
+                                El dinero no se fuga. Circula entre transportistas, embajadores y negocios locales. Los viajeros financian el bosque; el bosque construye infraestructura; la infraestructura atrae más viajeros.
+                            </p>
+                            <div class="flex items-center gap-2 pt-6 border-t border-gray-200 dark:border-white/10">
+                                <i class="fas fa-circle-notch text-brand-turquesa dark:text-brand-lima text-sm"></i>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Ciclo cerrado y autosostenible</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="relative bg-gray-100 dark:bg-brand-dark z-10 border-t border-brand-turquesa dark:border-brand-lima/20">
+            <div class="grid md:grid-cols-2">
+                <div class="relative h-[400px] overflow-hidden group">
+                    <img src="{% static 'imagenes/cabañas.jpg' %}" alt="Montaña" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                    <div class="absolute bottom-10 left-10 right-10">
+                        <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-6 border border-white/20">
+                            <i class="fas fa-mountain text-brand-lima text-xl"></i>
+                        </div>
+                        <h3 class="font-impact text-4xl tracking-wider mb-2 text-white">CONEXIÓN MONTAÑA</h3>
+                        <p class="text-white/80 font-light max-w-md">Del color de las olas a la neblina del café en un solo viaje. Conectamos la costa con Apaneca.</p>
+                    </div>
+                </div>
+
+                <div class="relative h-[400px] overflow-hidden group">
+                    <img src="{% static 'imagenes/ruta-panoramica.jpg' %}" alt="Playa" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                    <div class="absolute bottom-10 left-10 right-10">
+                        <div class="w-12 h-12 bg-brand-lima rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(196,213,81,0.5)]">
+                            <i class="fas fa-water text-gray-900 text-xl"></i>
+                        </div>
+                        <h3 class="font-impact text-4xl tracking-wider mb-2 text-white">RUTA PANORÁMICA</h3>
+                        <p class="text-white/80 font-light max-w-md">Rutas costeras diseñadas para inspirar. El mar es tu compañero de viaje en cada kilómetro.</p>
+                    </div>
+                </div>
+            </div>
+
+            <style>.dark #footer-pg { background: #0B0F19 !important; background-image: none !important; }</style>
+            <footer id="footer-pg" class="relative overflow-hidden bg-gradient-to-br from-brand-turquesa to-brand-lima pt-16 pb-8 border-t border-brand-lima/30 dark:border-white/5">
+                <!-- Fondo de Imagen Sutil -->
+                <div class="absolute inset-0 z-0 overflow-hidden">
+                    <img src="{% static 'imagenes/bg-footer.jpg' %}" alt="Background Footer" class="w-full h-[140%] object-cover opacity-10 mix-blend-overlay pointer-events-none origin-top">
+                </div>
+                <!-- Marcas de agua -->
+                <img src="{% static 'imagenes/logo-white.png' %}" class="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 -rotate-12 h-56 md:h-[400px] opacity-10 pointer-events-none mix-blend-overlay" alt="Watermark">
+                <img src="{% static 'imagenes/logo-white.png' %}" class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 -rotate-12 h-56 md:h-[400px] opacity-10 pointer-events-none hidden md:block mix-blend-overlay" alt="Watermark">
+
+                <div class="max-w-7xl mx-auto px-6 relative z-10">
+                    <div class="grid md:grid-cols-4 gap-12 mb-12">
+                        <div class="col-span-1 md:col-span-2">
+                            <div class="mb-6">
+                                <img src="{% static 'imagenes/logo-footer.png' %}" alt="Palenque Go" class="h-24 object-contain drop-shadow-lg">
+                            </div>
+                            <p class="text-white/80 font-light max-w-sm mb-8 text-sm leading-relaxed">
+                                Transformando la economía de la costa salvadoreña. Unimos la calidez ancestral con la eficiencia tecnológica.
+                            </p>
+                            <div class="flex gap-4">
+                                <a href="#" class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/30 transition-colors text-white">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/30 transition-colors text-white">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/30 transition-colors text-white">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Empresa</h4>
+                            <ul class="space-y-4 text-white/80 text-sm font-medium">
+                                <li><a href="#" class="hover:text-white transition">Sobre Nosotros</a></li>
+                                <li><a href="#" class="hover:text-white transition">Carreras</a></li>
+                                <li><a href="#" class="hover:text-white transition">Prensa</a></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Legal</h4>
+                            <ul class="space-y-4 text-white/80 text-sm font-medium">
+                                <li><a href="#" class="hover:text-white transition">Privacidad</a></li>
+                                <li><a href="#" class="hover:text-white transition">Términos</a></li>
+                                <li><a href="#" class="hover:text-white transition">Cookies</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-white/30 pt-8 flex flex-col md:flex-row justify-between items-center text-white/70 text-xs font-medium">
+                        <p>&copy; 2024 Wave & Brew Transport Inc. Todos los derechos reservados.</p>
+                        <div class="flex gap-5 mt-4 md:mt-0 text-lg">
+                            <a href="#" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="hover:text-white transition"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </section>
+    </div>
+
+<script>
+    // --- LÓGICA ACORDEÓN 2D ---
+    function toggleFaq(button) {
+        const content = button.nextElementSibling;
+        const icon = button.querySelector('.fa-plus');
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+            content.classList.remove('opacity-100');
+            content.classList.add('opacity-0');
+            icon.classList.remove('rotate-45');
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+            content.classList.remove('opacity-0');
+            content.classList.add('opacity-100');
+            icon.classList.add('rotate-45');
+        }
+    }
+
+    // --- MOTOR 3D: LÓGICA ORIGINAL ---
+    let scene, camera, renderer, luciérnagas, cabañasGroup, controls, currentCabinIndex = -1;
+    let ground, raycaster, mouse, isExperienceStarted = false, is3DLoaded = false, isLoading3D = false, elTerreno;
+
+    let isAutoTourActive = false;
+    let cabanaPlayer = null;
+
+    // Cargar API de YouTube
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    function onYouTubeIframeAPIReady() {
+        cabanaPlayer = new YT.Player('cabana-video-player', {
+            height: '100%',
+            width: '100%',
+            videoId: '',
+            playerVars: {
+                'autoplay': 1,
+                'rel': 0,
+                'showinfo': 0,
+                'modestbranding': 1
+            },
+            events: {
+                'onStateChange': onCabanaPlayerStateChange
+            }
+        });
+    }
+
+    function onCabanaPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.ENDED) {
+            closeCabanaVideoModal(false);
+            if (isAutoTourActive && currentCabinIndex < cabañasGroup.children.length - 1) {
+                nextCabin(true);
+            } else {
+                isAutoTourActive = false;
+            }
+        }
+    }
+
+ const cabañasData = [
+    { title: "ECOSISTEMA DE AFILIADOS", desc: "Tu red de afiliados y embajadores para potenciar la ocupación local.", color: 0x8ee01a, icon: "fa-network-wired", videoId: "z-ig00Ksxfw" },
+    { title: "MOVILIDAD SOBERANA", desc: "Logística y rutas eficientes de transporte circular por la costa.", color: 0x60a5fa, icon: "fa-route", videoId: "wlOxmoq2Vwk" },
+    { title: "MARKETPLACE TURÍSTICO", desc: "Exposición directa de productos y servicios de aliados locales.", color: 0xf87171, icon: "fa-store", videoId: "07n1vTFUl3M" },
+    { title: "FÁBRICA LIBERTAD", desc: "Espacio creativo y de producción local para potenciar la industria libre y soberana.", color: 0xa78bfa, icon: "fa-industry", videoId: "kW4gY1RrAM4" },
+    { title: "TELA DE LA ARAÑA", desc: "Nuestra red descentralizada de conexión e información local.", color: 0xf59e0b, icon: "fa-spider", videoId: "Z6Z_eeNgJ6Y" },
+    { title: "LANZADERA DE EMPRENDEDORES", desc: "Chasis tecnológico y lanzamiento estratégico para emprendedores locales.", color: 0x10b981, icon: "fa-rocket", videoId: "gZF8tIztEuw" },
+    { title: "NUEVA SIEMBRA", desc: "Proyectos ecológicos y siembra de bosques financiados por transacciones.", color: 0x34d399, icon: "fa-leaf", videoId: "h9sFA72avMg" },
+    { title: "TALLER DE BAMBÚ", desc: "Infraestructura modular y sostenible construida en el territorio.", color: 0xd97706, icon: "fa-campground", videoId: "5NndHyRyS50" },
+    { title: "EVOLUCIÓN CIRCULAR", desc: "El futuro del ecosistema circular y el progreso socioeconómico costero.", color: 0xec4899, icon: "fa-chart-line", videoId: "X5vCC3MG11Q" }
+];
+
+const posicionesPredeterminadas = [
+    { x: 50.00, y: -24.50, z: 4.60, rotY: -1.04 },
+    { x: 42.00, y: -24.50, z: -1.50, rotY: -0.89 },
+    { x: 27.50, y: -21.50, z: -7.00, rotY: -0.79 },
+    { x: 16.00, y: -19.00, z: -16.00, rotY: -0.74 },
+    { x: -9.40, y: -20.40, z: 0.20, rotY: 2.36 },
+    { x: -16.60, y: -19.60, z: -5.60, rotY: -0.64 },
+    { x: -23.40, y: -18.10, z: -13.20, rotY: 2.56 },
+    { x: -33.50, y: -16.00, z: -19.00, rotY: 2.41 },
+    { x: -53.50, y: -13.00, z: -27.50, rotY: 2.66 }
+];
+
+// Vista inicial de cámara y target predeterminada (se detiene aquí tras dar el giro panorámico)
+const vistaInicialCamera = { x: -14.23, y: 4.48, z: -58.12 };
+const vistaInicialTarget = { x: 0.00, y: 0.00, z: 0.00 };
+
+// Archivo de fondo 360 grados (puede ser nuevo_fondo.jpg, nuevo_fondo.png o nuevo_fondo.hdr)
+// NOTA: Se recomienda JPG o PNG para colores exactos sin contrastes HDR exagerados.
+const fondoFileName = 'nuevo_fondo.png';
+
+    function init3D() {
+    if (isLoading3D) return;
+    isLoading3D = true;
+    
+    // Feedback visual inmediato en el botón
+    const btn = document.getElementById('btn-explorar');
+    if(btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Cargando Ecosistema 3D...`;
+        btn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-500');
+        btn.classList.remove('bg-white', 'hover:bg-brand-turquesa', 'dark:bg-brand-lima');
+    }
+
+    scene = new THREE.Scene();
+
+    // Eliminar el fondo azul feo, dejar que sea transparente
+    // scene.background = new THREE.Color(0x87CEEB);
+
+    camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(150, 90, 180);
+
+    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas-container'), antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0; // Restauramos a 1.0 para que el terreno conserve su verde intenso
+    renderer.outputEncoding = THREE.sRGBEncoding; // Corrección sRGB crucial para evitar colores quemados o tenebrosos
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enabled = false;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 5;
+    controls.maxDistance = 60;
+    controls.maxPolarAngle = Math.PI / 2.1;
+    controls.target.set(0, -20, -20);
+
+    // Luces
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xffeedd, 0.85);
+    sunLight.position.set(20, 30, 10);
+    sunLight.castShadow = true;
+    scene.add(sunLight);
+
+    const gltfLoader = new THREE.GLTFLoader();
+
+    // ================================================================
+    // 1. CARGAMOS EL AMBIENTE Y EL TERRENO (mangaone_valley_road_1k.glb)
+    // ================================================================
+    let loader;
+    const isHDR = fondoFileName.toLowerCase().endsWith('.hdr');
+    if (isHDR) {
+        loader = new THREE.RGBELoader();
+    } else {
+        loader = new THREE.TextureLoader();
+    }
+
+    const bgUrl = '{% static "3d/" %}' + fondoFileName + '?v=2';
+
+    loader.load(bgUrl, function(texture) {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        
+        // Si no es HDR (ej. JPG o PNG), forzamos codificación sRGB para evitar colores lavados
+        if (!isHDR) {
+            texture.encoding = THREE.sRGBEncoding;
+        }
+
+        scene.background = texture;
+        scene.environment = texture;
+
+        // Cargar el terreno de colinas mangaone
+        gltfLoader.load('{% static "3d/mangaone_valley_road_1k.glb" %}', function(gltf) {
+            const terreno = gltf.scene;
+            elTerreno = terreno;
+            terreno.scale.set(2.1, 2.1, 2.1);
+            terreno.position.set(100.00, 93.50, -100.00);
+            terreno.rotation.set(-3.14, 2.94, -0.12);
+            terreno.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+            scene.add(terreno);
+            
+            // Termina la carga
+            is3DLoaded = true;
+            const btn = document.getElementById('btn-explorar');
+            if(btn) {
+                btn.disabled = false;
+                btn.innerHTML = 'Explorar 3D Ahora <i class="fas fa-arrow-right ml-2"></i>';
+                btn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-500');
+                btn.classList.add('bg-white', 'hover:bg-brand-turquesa', 'dark:bg-brand-lima');
+            }
+            startExperience(); // Entrar automáticamente una vez termine de cargar
+        }, 
+        // Progreso de carga del terreno
+        function(xhr) {
+            const btn = document.getElementById('btn-explorar');
+            if(btn) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-500');
+                btn.classList.remove('bg-white', 'hover:bg-brand-turquesa', 'dark:bg-brand-lima');
+                if (xhr.lengthComputable) {
+                    const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Cargando Terreno: ${percentComplete}%`;
+                } else {
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Descargando Terreno 3D...`;
+                }
+            }
+        }, 
+        function(error) {
+            console.error("Error cargando el terreno GLB:", error);
+            isLoading3D = false;
+        });
+    }, undefined, function(error) {
+        console.error("Error cargando el cielo HDR:", error);
+    });
+
+    // ================================================================
+    // 2. CARGAMOS LAS 9 CABAÑAS INDIVIDUALES
+    // ================================================================
+    cabañasGroup = new THREE.Group();
+    scene.add(cabañasGroup);
+
+    const modelFiles = [
+        '1-ecosistema.glb',
+        '2-movlidad-soberana.glb',
+        '3-marketplace.glb',
+        '4-fabrica-libertad.glb',
+        '5-tela-de-la-arana.glb',
+        '6-lanzadera.glb',
+        '7-nueva-siembra.glb',
+        '8-taller-de-bambu.glb',
+        '9-evolucion.glb'
+    ];
+
+    cabañasData.forEach((data, i) => {
+        gltfLoader.load(
+            '{% static "3d/" %}' + modelFiles[i],
+            function(gltfModel) {
+                const cabaña = gltfModel.scene;
+                cabaña.scale.set(2, 2, 2);
+                cabaña.traverse(function(child) {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        if (child.material) {
+                            child.material.metalness = 0.0;
+                            child.material.roughness = 1.0;
+                            if (child.material.emissive) {
+                                child.material.emissive.setHex(0x000000);
+                            }
+                        }
+                    }
+                });
+
+                // LUZ DE INTERACCIÓN INTERNA
+                const pointLight = new THREE.PointLight(data.color, 0, 15);
+                pointLight.position.set(0, 4, 0);
+                cabaña.add(pointLight);
+
+                const pos = posicionesPredeterminadas[i];
+                cabaña.position.set(pos.x, pos.y, pos.z);
+                cabaña.rotation.y = pos.rotY;
+                cabaña.userData = { ...data, light: pointLight, domo: cabaña, index: i };
+
+                // CREAMOS EL NÚMERO "3D" (Sprite con Canvas) FLOTANDO ARRIBA
+                const numSprite = createNumberSprite(i + 1, data.color);
+                numSprite.position.set(0, 3.2, 0); // Altura intermedia perfecta
+                cabaña.add(numSprite);
+                
+                // Animación sutil de flotación
+                gsap.to(numSprite.position, {
+                    y: 3.5, duration: 2 + Math.random(), 
+                    yoyo: true, repeat: -1, ease: "sine.inOut"
+                });
+
+                // Asignar nombre único para ordenar e identificar
+                cabaña.name = `cabana_${i}`;
+                cabañasGroup.add(cabaña);
+
+                // Ordenar cabañasGroup por su nombre para asegurar coherencia en clics y arrays
+                cabañasGroup.children.sort((a, b) => {
+                    const idxA = parseInt(a.name.split('_')[1]);
+                    const idxB = parseInt(b.name.split('_')[1]);
+                    return idxA - idxB;
+                });
+            },
+            undefined,
+            function(error) {
+                console.error("Error cargando la cabaña " + modelFiles[i], error);
+            }
+        );
+    });
+
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+
+    animate();
+}
+    function animate() {
+        requestAnimationFrame(animate);
+        if (controls.enabled) controls.update();
+        if(luciérnagas) {
+            luciérnagas.rotation.y += 0.0003;
+            luciérnagas.material.opacity = 0.5 + Math.sin(Date.now() * 0.001) * 0.3;
+        }
+
+        // Actualizar UI del Calibrador con la posición en tiempo real de la cámara y target
+        const camPosEl = document.getElementById('val-cam-pos');
+        const camTargetEl = document.getElementById('val-cam-target');
+        if (camera && camPosEl) {
+            camPosEl.innerText = `X: ${camera.position.x.toFixed(2)}, Y: ${camera.position.y.toFixed(2)}, Z: ${camera.position.z.toFixed(2)}`;
+        }
+        if (controls && camTargetEl) {
+            camTargetEl.innerText = `X: ${controls.target.x.toFixed(2)}, Y: ${controls.target.y.toFixed(2)}, Z: ${controls.target.z.toFixed(2)}`;
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    // --- TRANSICIONES ENTRE 2D Y 3D ---
+
+    function startExperience() {
+        if (!is3DLoaded) {
+            init3D();
+            return;
+        }
+
+        // Flash de transición
+        gsap.to("#transition-overlay", {
+            opacity: 1, duration: 0.4, yoyo: true, repeat: 1, ease: "power2.inOut"
+        });
+
+        // Ocultar TODO el contenido 2D escrolleable
+        gsap.to("#main-scroll-content", {
+            opacity: 0, y: -50, scale: 0.95, duration: 0.8, ease: "power4.inOut",
+            onComplete: () => {
+                document.getElementById('main-scroll-content').style.display = 'none';
+                document.getElementById('btn-exit-3d').classList.add('visible');
+                document.getElementById('btn-start-tour').classList.add('visible');
+
+                // Activar interacciones del canvas
+                document.getElementById('canvas-container').style.pointerEvents = 'auto';
+                isExperienceStarted = true;
+                window.scrollTo(0, 0); // Reset scroll
+            }
+        });
+
+        // Movimiento cinemático de cámara (Giro panorámico orbital de 360° que termina en la vista calibrada)
+        if (controls) controls.enabled = false;
+
+        // Calcular parámetros de órbita dinámicamente según la vista calibrada
+        const TarX = vistaInicialTarget.x;
+        const TarY = vistaInicialTarget.y;
+        const TarZ = vistaInicialTarget.z;
+
+        const CamX = vistaInicialCamera.x;
+        const CamY = vistaInicialCamera.y;
+        const CamZ = vistaInicialCamera.z;
+
+        // Vector desde el target a la cámara
+        const vx = CamX - TarX;
+        const vy = CamY - TarY;
+        const vz = CamZ - TarZ;
+
+        // Radio en el plano X-Z
+        const R = Math.sqrt(vx * vx + vz * vz);
+        const H = vy;
+
+        // Ángulo final de la órbita en la vista calibrada
+        const thetaFinal = Math.atan2(vz, vx);
+
+        // Objeto temporal para animar ángulo y altura con GSAP
+        const animObj = {
+            angle: thetaFinal - 2 * Math.PI, // Iniciamos exactamente una vuelta atrás
+            height: TarY + H * 2.2 // Iniciamos un poco más alto para perspectiva de helicóptero
+        };
+
+        // Forzar controles a mirar al target de calibración inicial
+        if (controls) {
+            controls.target.set(TarX, TarY, TarZ);
+            controls.update();
+        }
+
+        const tl = gsap.timeline({
+            onUpdate: () => {
+                camera.position.x = TarX + R * Math.cos(animObj.angle);
+                camera.position.z = TarZ + R * Math.sin(animObj.angle);
+                camera.position.y = animObj.height;
+                if (controls) {
+                    controls.target.set(TarX, TarY, TarZ);
+                    controls.update();
+                } else {
+                    camera.lookAt(TarX, TarY, TarZ);
+                }
+            },
+            onComplete: () => {
+                if (controls) {
+                    controls.target.set(TarX, TarY, TarZ);
+                    controls.update();
+                    controls.enabled = true;
+                }
+                isExperienceStarted = true;
+            }
+        });
+
+        // Animación orbital suave
+        tl.to(animObj, {
+            angle: thetaFinal,
+            height: TarY + H,
+            duration: 6.5, // 6.5 segundos para una vuelta entera majestuosa
+            ease: "power2.inOut"
+        });
+    }
+
+    function exitExperience() {
+        isExperienceStarted = false;
+        closeInfo();
+
+        document.getElementById('btn-exit-3d').classList.remove('visible');
+        document.getElementById('btn-start-tour').classList.remove('visible');
+
+        // Desactivar interacciones del canvas para poder scrollear la landing
+        document.getElementById('canvas-container').style.pointerEvents = 'none';
+
+        const landing = document.getElementById('main-scroll-content');
+        landing.style.display = 'block';
+
+        // Mostrar de nuevo la Landing 2D
+        gsap.to(landing, { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power3.out" });
+
+        // Volver cámara a posición original panorámica detrás del contenido 2D (inició de la órbita)
+        const TarX = vistaInicialTarget.x;
+        const TarY = vistaInicialTarget.y;
+        const TarZ = vistaInicialTarget.z;
+        const CamX = vistaInicialCamera.x;
+        const CamY = vistaInicialCamera.y;
+        const CamZ = vistaInicialCamera.z;
+
+        const vx = CamX - TarX;
+        const vy = CamY - TarY;
+        const vz = CamZ - TarZ;
+        const R = Math.sqrt(vx * vx + vz * vz);
+        const H = vy;
+        const thetaFinal = Math.atan2(vz, vx);
+
+        const initAngle = thetaFinal - 2 * Math.PI;
+        const initCamX = TarX + R * Math.cos(initAngle);
+        const initCamZ = TarZ + R * Math.sin(initAngle);
+        const initCamY = TarY + H * 2.2;
+
+        gsap.to(camera.position, { x: initCamX, y: initCamY, z: initCamZ, duration: 2, ease: "expo.inOut" });
+
+        controls.enabled = false;
+        cabañasGroup.children.forEach(c => c.userData.light.intensity = 0);
+        gsap.to(controls.target, { x: TarX, y: TarY, z: TarZ, duration: 2, ease: "expo.inOut" });
+    }
+
+    // --- INTERACCIÓN DE CABAÑAS EN 3D ---
+
+    // --- NUEVA INTERACCIÓN DE CABAÑAS EN 3D ---
+    window.addEventListener('click', (event) => {
+        if(!isExperienceStarted) return;
+        if (event.target.id !== 'canvas-container') return;
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(cabañasGroup.children, true);
+
+        if (intersects.length > 0) {
+            let clickedObj = intersects[0].object;
+            while(clickedObj.parent && clickedObj.parent !== cabañasGroup) {
+                clickedObj = clickedObj.parent;
+            }
+
+            const nuevoIndice = cabañasGroup.children.indexOf(clickedObj);
+
+            // ¡LA MAGIA AQUÍ! Si hacemos clic en el domo en el que YA estamos adentro,
+            // ignoramos el clic para que puedas arrastrar la cámara y maniobrar tranquilo.
+            if (nuevoIndice === currentCabinIndex) {
+                return;
+            }
+
+            showCabañaInfo(clickedObj);
+        }
+    });
+
+    function showCabañaInfo(cabañaGroup, isAuto = false) {
+        document.getElementById('btn-start-tour').classList.remove('visible');
+        currentCabinIndex = cabañasGroup.children.indexOf(cabañaGroup);
+        const data = cabañaGroup.userData;
+
+        // Disable controls during the animation flight to prevent fighting with GSAP
+        if (controls) controls.enabled = false;
+
+        // Apagamos todas las luces y restauramos la rotación original predeterminada de todas las cabañas
+        cabañasGroup.children.forEach((c) => {
+            if (c.userData && c.userData.light) c.userData.light.intensity = 0;
+            if (c.userData && c.userData.domo) c.userData.domo.visible = true;
+            const origIndex = c.userData.index;
+            const origPos = posicionesPredeterminadas[origIndex];
+            if (origPos) c.rotation.y = origPos.rotY;
+        });
+
+        // 1. Obtener la posición exacta del domo
+        const worldPos = new THREE.Vector3();
+        cabañaGroup.getWorldPosition(worldPos);
+
+        // 2. Definir "Altura de los Ojos" y posición usando Coordenadas Locales
+        // Acercamos más la cámara y la rotamos un poco, además ajustamos la altura al levantar la cabaña.
+        // Coordenadas exactas obtenidas por el usuario
+        const localCameraPos = new THREE.Vector3(0.16, 0.71, 3.85);
+        const localLookAtPos = new THREE.Vector3(1.5, 0.4, 0.0);
+
+        // 3. Convertimos las coordenadas locales a coordenadas reales del mundo (3D) antes de que empiece a rotar la cabaña
+        const targetPos = cabañaGroup.localToWorld(localCameraPos.clone());
+        const lookAtPos = cabañaGroup.localToWorld(localLookAtPos.clone());
+
+        // ¡MAGIA!: Quitamos el campo de fuerza para poder estar adentro de la casa
+        controls.minDistance = 0.1;
+
+        // Hacemos el vuelo cinemático de la cámara directo hacia la cabaña (evita marear y es súper fluido)
+        gsap.to(camera.position, {
+            x: targetPos.x,
+            y: targetPos.y,
+            z: targetPos.z,
+            duration: 2.0, // Vuelo más rápido y dinámico
+            ease: "power2.out",
+            onUpdate: () => camera.lookAt(worldPos), // Mantener el encuadre centrado en la cabaña
+            onComplete: () => {
+                controls.target.copy(lookAtPos);
+                controls.update();
+                controls.enabled = true;
+                camera.lookAt(lookAtPos);
+                
+                // Encendemos la luz interna de la cabaña (luz de escenario) al llegar
+                if(data.light) data.light.intensity = 8;
+
+                // Animamos a la cabaña dando 3 vueltas completas sobre su propio eje (Presentación tipo personaje)
+                // Esto inicia en primer plano una vez que la cámara ya aterrizó y está fija
+                const origIndex = cabañaGroup.userData.index;
+                const origPos = posicionesPredeterminadas[origIndex];
+                const rotYStart = origPos ? origPos.rotY : cabañaGroup.rotation.y;
+                const rotYEnd = rotYStart + 6 * Math.PI; // 3 vueltas (6 * PI)
+
+                gsap.to(cabañaGroup.rotation, {
+                    y: rotYEnd,
+                    duration: 3.5, // Tiempo majestuoso para lucir el modelado
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                         if (isAuto === true && isAutoTourActive) {
+                             openCabanaVideo();
+                         }
+                    }
+                });
+            }
+        });
+
+        // Actualizamos la Interfaz 2D
+        document.getElementById('domo-title').innerText = data.title;
+        document.getElementById('domo-title').style.color = `#${data.color.toString(16)}`;
+        document.getElementById('domo-body').innerHTML = `<p>${data.desc}</p>`;
+        document.getElementById('domo-icon').className = `fas ${data.icon} text-3xl`;
+        document.getElementById('domo-icon').style.color = `#${data.color.toString(16)}`;
+        document.getElementById('info-panel').classList.add('active');
+    }
+
+function closeInfo() {
+        document.getElementById('info-panel').classList.remove('active');
+        document.getElementById('btn-start-tour').classList.add('visible');
+        if (controls) controls.enabled = false;
+        cabañasGroup.children.forEach((c) => {
+            if (c.userData && c.userData.light) c.userData.light.intensity = 0;
+            // Restaurar rotación predeterminada exacta al salir
+            const origIndex = c.userData.index;
+            const origPos = posicionesPredeterminadas[origIndex];
+            if (origPos) c.rotation.y = origPos.rotY;
+        });
+        currentCabinIndex = -1;
+
+        gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1 });
+        gsap.to(camera.position, {
+            x: -58.45, y: 13.20, z: 3.01,
+            duration: 1.5,
+            onComplete: () => {
+                if (controls) {
+                    controls.target.set(0, 0, 0);
+                    controls.update();
+                    controls.enabled = true;
+                }
+            }
+        });
+    }
+
+    function nextCabin(isAuto = false) {
+        if (currentCabinIndex === -1) return;
+        if (isAuto !== true) {
+            isAutoTourActive = false;
+        }
+        let nextIndex = (currentCabinIndex + 1) % cabañasGroup.children.length;
+        showCabañaInfo(cabañasGroup.children[nextIndex], isAuto === true);
+    }
+
+    function prevCabin() {
+        if (currentCabinIndex === -1) return;
+        isAutoTourActive = false;
+        let prevIndex = (currentCabinIndex - 1 + cabañasGroup.children.length) % cabañasGroup.children.length;
+        showCabañaInfo(cabañasGroup.children[prevIndex]);
+    }
+
+    function openCabanaVideo() {
+        if (currentCabinIndex === -1) return;
+        const data = cabañasGroup.children[currentCabinIndex].userData;
+        
+        if (currentCabinIndex === 0) {
+            isAutoTourActive = true;
+        }
+
+        document.getElementById('modal-video-implement').classList.remove('hidden');
+        
+        if (cabanaPlayer && cabanaPlayer.loadVideoById) {
+            cabanaPlayer.loadVideoById(data.videoId);
+        }
+    }
+
+    function openYoutubeModal() {
+        document.getElementById('modal-video').classList.remove('hidden');
+    }
+
+    function closeYoutubeModal() {
+        document.getElementById('modal-video').classList.add('hidden');
+        const iframe = document.querySelector('#modal-video iframe');
+        if(iframe) {
+            const src = iframe.src;
+            iframe.src = src; // Stop video from playing in background
+        }
+    }
+
+    function closeCabanaVideoModal(isManual = false) {
+        if (isManual) {
+            isAutoTourActive = false;
+        }
+        document.getElementById('modal-video-implement').classList.add('hidden');
+        if (cabanaPlayer && cabanaPlayer.stopVideo) {
+            cabanaPlayer.stopVideo();
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Función para crear un número flotante estilo holograma
+    function createNumberSprite(number, colorHex) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+        
+        const colorStr = '#' + colorHex.toString(16).padStart(6, '0');
+        
+        // Sombra / Brillo (Holograma 3D effect)
+        ctx.shadowColor = colorStr;
+        ctx.shadowBlur = 25;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 10;
+        
+        ctx.font = '900 130px Impact, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Relleno de color
+        ctx.fillStyle = colorStr;
+        ctx.fillText(number, 128, 128);
+        
+        // Borde blanco para darle grosor y efecto 3D
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = 'white';
+        ctx.strokeText(number, 128, 128);
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const sprite = new THREE.Sprite(material);
+        sprite.scale.set(2.5, 2.5, 2.5); // Escala del sprite
+        return sprite;
+    }
+
+    // Iniciar 3D al cargar (Desactivado para que cargue solo al dar clic)
+    // init3D();
+
+    // Dev tools removed
+
+    function startTour() {
+        if (!cabañasGroup || cabañasGroup.children.length === 0) return;
+        showCabañaInfo(cabañasGroup.children[0]);
+    }
+
+    function copiarCoordenadas() {
+        // Dev function removed
+    }
+</script>
+
+    <!-- Dev panel HTML removed for production -->
+</body>
+</html>
